@@ -9,6 +9,9 @@ const useStyle = makeStyles((theme) => ({
   },
   Card: {
     padding: theme.spacing(1, 1, 1, 1)
+  },
+  test:{
+    
   }
 }));
 export default function Card({ card, index }) {
