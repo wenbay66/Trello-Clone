@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
-import Story from "./Utils/Story";
 import { makeStyles } from "@material-ui/core/styles";
-import Storyapi from "./Utils/Storyapi";
 import { Droppable, DragDropContext } from "react-beautiful-dnd";
-import "./reset.css";
-import "./styles.css";
-import List from "./Component/List/List";
-import InputContainer from "./Component/List/InputContainer";
-//import InputTextarea from "./Component/List/InputTextarea";
+//css
+import "../../Css/reset.css";
+import "../../Css/styles.css";
+//component
+import Story from "../../Utils/Story";
+import Storyapi from "../../Utils/Storyapi";
+import List from "./List";
+import InputContainer from "./InputContainer";
 
 const useStyle = makeStyles((theme) => ({
   root: {
