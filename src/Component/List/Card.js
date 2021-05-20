@@ -19,7 +19,12 @@ export default function Card({ card, index }) {
   return (
     <Draggable draggableId={card.id} index={index}>
       {(provided) => (
-        <div className={classes.root} ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}>
+        <div 
+          className={classes.root} 
+          ref={provided.innerRef}
+          {...provided.dragHandleProps} 
+          {...provided.draggableProps}
+        >
           <Paper className={classes.Card}>{card.context}</Paper>
         </div>
       )}
