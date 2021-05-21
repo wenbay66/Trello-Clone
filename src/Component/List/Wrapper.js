@@ -14,7 +14,7 @@ import InputContainer from "./InputContainer";
 const useStyle = makeStyles((theme) => ({
   root: {
     display: "flex",
-    minHeigh: "100vh"
+    minHeigh: "100vh",
     //padding:theme.spacing(1)
   }
 }));

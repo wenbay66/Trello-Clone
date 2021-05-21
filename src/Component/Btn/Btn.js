@@ -21,10 +21,10 @@ const Button = styled.button`
     font-variant-numeric: normal;
     letter-spacing: normal;
     outline: none;
-    background-color: rgba(255, 255, 255 ,0.2);
+    background-color: rgba(255, 255, 255 ,0.3);
     backdrop-filter: blur(4px);
     &:hover {
-        background-color: rgba(255, 255, 255 ,0.3);
+        background-color: rgba(255, 255, 255 ,0.4);
       }
 `
 export default function Btn(props){

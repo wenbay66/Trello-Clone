@@ -10,8 +10,8 @@ import RoomServiceIcon from '@material-ui/icons/RoomService';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 const Container = styled.div`
-    max-height: 34px;
-    min-height: 34px;
+    max-height: 40px;
+    min-height: 40px;
     background: rgb(1,121,191);
     padding: 4px 8px 4px 8px;
     display: flex;
@@ -63,16 +63,22 @@ export default function TopBar(){
             </Btn>
           </span>
           <Border />
-          <sapn>
+          <span>
             <Btn>
                 <span style={{padding:'0px 4px 0px 4px'}}>jen wen 的工作區</span>
             </Btn>
-          </sapn>
+          </span>
           <Border />
           <span>
             <Btn>
               <LockIcon style={{fontSize:14}}/>
               <span style={{padding:'0px 4px 0px 4px'}}>私密</span>
+            </Btn>
+          </span>
+          <Border />
+          <span>
+            <Btn>
+              <span style={{padding:'0px 10px 0px 10px'}}>邀請</span>
             </Btn>
           </span>
         </ContainerDIV>
