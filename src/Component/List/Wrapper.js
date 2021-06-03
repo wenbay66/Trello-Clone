@@ -14,11 +14,10 @@ import InputContainer from "./InputContainer";
 const useStyle = makeStyles((theme) => ({
   root: {
     display: "flex",
-    minHeigh: "100vh",
-    //padding:theme.spacing(1)
   }
 }));
-export default function Wrapper() {
+//React.memo => props有改變就-render
+const Wrapper = React.memo(function Wrapper() {
   const className = useStyle();
   const [data, setdata] = useState(Story);
   //新增卡片
@@ -107,7 +106,6 @@ export default function Wrapper() {
     //卡片移動至另一個看板
     if (source.droppableId !== destination.droppableId) {
       SourceList.cards.splice(source.index, 1);
-      console.log(DestinationList);
       DestinationList.cards.splice(destination.index, 0, draggingCard);
       const NewState = {
         ...data,
@@ -120,26 +118,7 @@ export default function Wrapper() {
       //console.log("move to other list");
     }
   };
-  const onDragEnd1 = (result) => {
-    const { destination, source, draggableId } = result;
-    if (!destination) return;
-    const sourceList = data.lists[source.droppableId];
-    const destinationList = data.lists[destination.droppableId];
-    const draggCard = sourceList.cards.filter((card) => card.id === draggableId)[0];
-    console.log(draggCard);
-    if (source.droppableId === destination.droppableId) {
-      sourceList.cards.splice(source.index, 1);
-      sourceList.cards.splice(destination.index, 0, draggCard);
-      const newState = {
-        ...data,
-        lists: {
-          ...data.lists,
-          [sourceList.id]: sourceList
-        }
-      };
-      setdata(newState);
-    }
-  };
+  console.log('wrapper re-render')
   return (
     <Storyapi.Provider value={{ AddNewCard, AddNewList, UpDateTitle }}>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -158,22 +137,5 @@ export default function Wrapper() {
       </DragDropContext>
     </Storyapi.Provider>
   );
-  /*return (
-    <Storyapi.Provider value={{ AddNewCard, AddNewList, UpDateTitle }}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="app" type="List" direction="horizontal">
-          {(provided) => (
-            <div className={className.root} ref={provided.innerRef} {...provided.droppableProps}>
-              {data.listIds.map((listId, index) => {
-                const list = data.lists[listId];
-                return <List list={list} key={listId} index={index} />;
-              })}
-              <InputTextarea type="list" />
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </Storyapi.Provider>
-  );*/
-}
+})
+export default Wrapper;

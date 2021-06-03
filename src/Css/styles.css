@@ -18,3 +18,15 @@ textarea {
 textarea::placeholder {
   color: #5e6c84;
 }
+body{
+  padding:0;
+  margin:0;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+body{
+  height:100%
+}
+#root{
+  height:100%
+}

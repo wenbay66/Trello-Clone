@@ -1,7 +1,8 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import styled from "styled-components";
 //component
 import Btn from "../Btn/Btn"
+import {OpenContext} from '../../Context/OpenContext'
 import FormatListBulletedRoundedIcon from '@material-ui/icons/FormatListBulletedRounded';
 import KeyboardArrowDownRoundedIcon from '@material-ui/icons/KeyboardArrowDownRounded';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
@@ -9,20 +10,20 @@ import LockIcon from '@material-ui/icons/Lock';
 import RoomServiceIcon from '@material-ui/icons/RoomService';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
+
 const Container = styled.div`
-    max-height: 40px;
-    min-height: 40px;
-    background: rgb(1,121,191);
-    padding: 4px 8px 4px 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  max-height: 40px;
+  min-height: 40px;
+  padding: 4px 8px 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `
 const TitleBtn = styled.span`
-    font-weight: 700;
-    font-size: 18px;
-    margin-left: 6px;
-    margin-right: 6px;
+  font-weight: 700;
+  font-size: 18px;
+  margin-left: 6px;
+  margin-right: 6px;
 ` 
 const Border = styled.span`
     border-left-color: rgba(255, 255, 255, 0.24);
@@ -35,24 +36,25 @@ const Border = styled.span`
 const ContainerDIV = styled.div`
   display: flex;
   align-items: center;
+  padding-left: ${props => props.paddingLeft ? props.paddingLeft : ''}
 `
 
 export default function TopBar(){
+  //alert(isOpenContext)
   const ccc = ()=>{
-      alert('123')
+    alert('123')
   }
+  const {isOpen, setisOpen} = useContext(OpenContext);
   return (
     <>
       <Container>
-        <ContainerDIV>
-          <span onClick={ccc}>
-            <Btn>
-                <FormatListBulletedRoundedIcon style={{fontSize:14}}/>
-                <span>看板</span>
-                <KeyboardArrowDownRoundedIcon/>
-            </Btn>
-          </span>
-          <span onClick={ccc} style={{marginLeft:'4px'}}>
+        <ContainerDIV paddingLeft='4px'>
+          <Btn fnc={ccc}>
+            <FormatListBulletedRoundedIcon style={{fontSize:14}}/>
+            <span>看板</span>
+            <KeyboardArrowDownRoundedIcon/>
+          </Btn>
+          <span style={{marginLeft:'4px'}}>
             <Btn>
                 <TitleBtn>程式roadMap</TitleBtn>
             </Btn>
@@ -89,12 +91,15 @@ export default function TopBar(){
               <span style={{padding:'0px 4px 0px 6px'}}>Bulter</span>
             </Btn>
           </span>
-          <span style={{marginLeft:'4px'}}>
-            <Btn>
-              <MoreHorizIcon style={{fontSize:'medium'}}/>
-              <span style={{padding:'0px 4px 0px 6px'}}>顯示選單</span>
-            </Btn>
-          </span>
+          {!isOpen ? (
+            <span style={{marginLeft:'4px'}}>
+              <Btn fnc={() => setisOpen(true)}>
+                <MoreHorizIcon style={{fontSize:'medium'}}/>
+                <span style={{padding:'0px 4px 0px 6px'}}>顯示選單</span>
+              </Btn>
+            </span>
+          ) : ''}
+          
         </ContainerDIV>
       </Container>
     </>
