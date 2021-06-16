@@ -26,7 +26,7 @@ const Wrapper = styled.div`
   animation: ${animat} .1s ease-in;
 `
 export default function Color(){
-    const ColorList = ['#0079BF', '#D29034', '#519839', '#B04632', '#89609E', '#CD5A91', '#4BBF6B', '#00AECC', '#838C91'];
+    const ColorList = ['#1A79BF', '#D29034', '#519839', '#B04632', '#89609E', '#CD5A91', '#4BBF6B', '#00AECC', '#838C91'];
     const Context = useContext(ThemeContext);
     //const Theme = Context.Theme;
     const CheseTheme = Context.CheseTheme;

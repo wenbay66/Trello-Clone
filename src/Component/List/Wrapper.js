@@ -16,10 +16,11 @@ const useStyle = makeStyles((theme) => ({
     display: "flex",
   }
 }));
+
 //React.memo => props有改變就-render
 const Wrapper = React.memo(function Wrapper() {
   const className = useStyle();
-  const [data, setdata] = useState(Story);
+  const [data, setdata] = useState(Story);        //卡片資料
   //新增卡片
   const AddNewCard = (title, listid) => {
     const newCardId = uuid();
@@ -118,17 +119,18 @@ const Wrapper = React.memo(function Wrapper() {
       //console.log("move to other list");
     }
   };
-  console.log('wrapper re-render')
+  const ListData = data.listIds.map((listId, index) => {
+    const list = data.lists[listId];
+    return <List list={list} key={listId} index={index} />;
+  })
+  console.log('weapper render')
   return (
     <Storyapi.Provider value={{ AddNewCard, AddNewList, UpDateTitle }}>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="app" type="List" direction="horizontal">
           {(provided) => (
             <div className={className.root} ref={provided.innerRef} {...provided.droppableProps}>
-              {data.listIds.map((listId, index) => {
-                const list = data.lists[listId];
-                return <List list={list} key={listId} index={index} />;
-              })}
+              {ListData}
               <InputContainer type="List" />
               {provided.placeholder}
             </div>

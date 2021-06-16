@@ -1,16 +1,33 @@
-import React from 'react';
+import React,{useState, useEffect, useContext } from 'react';
+//context
+import { TagContext } from '../../Container';
 import styled from "styled-components";
-const Span = styled.div`
+/*const animat = keyframes`
+    0% {
+        width: 30px;
+    }   
+    100% {
+        width: auto;
+    }animation: ${animat} 2s ease-in;
+`;*/
+const Wrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+`
+const Div = styled.div`
     font-weight: 700;
     font-size: 12px;
-    background-color: rgb(97, 189, 79);
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Noto Sans,Ubuntu,Droid Sans,Helvetica Neue,sans-serif;
+    background-color: ${props => props.bgColor ? props.bgColor : ''};
     border-radius: 4px;
     color: rgb(255, 255, 255);
     cursor: pointer;
-    height: 16px;
+    min-height: 8px;
+    max-height: 16px;
     line-height: 16px;
-    min-width: 40px;
+    min-width: 30px;
     max-width: 198px;
+    transition: width 2s ease;
     margin: 0px 4px 0px 0px;
     padding: 0px 8px 0px 8px;
     text-align: center;
@@ -20,12 +37,26 @@ const Span = styled.div`
     }
 `
 export default function Tag({tagID}) {
-    const fnc = () => alert(`123`);
-    const data = tagID ? (
-        <Span onClick={fnc}>React</Span>
-    ) : (
-        <div />
+    const [Data, setData] = useState(null)
+    const {AllTagData, ShowMode, setShowMode} = useContext(TagContext);
+    //改成顯示精簡模式
+    const fnc = (event) => {
+        event.stopPropagation();
+        setShowMode(!ShowMode);
+    }
+    useEffect(() => {
+        if(AllTagData && tagID){
+            let data = AllTagData.find(e => e.tagID === tagID);
+            setData(data);
+        }
+    },[AllTagData, tagID])
+    return (
+        <Wrapper>
+            {tagID && Data ? (
+                <Div onClick={fnc} bgColor={Data.bgColor}>{ShowMode ? Data.tagName : ''}</Div>
+            ) : (
+                <div />
+            )}
+        </Wrapper>
     )
-    
-    return <>{data}</>
 }

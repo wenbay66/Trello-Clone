@@ -2,7 +2,7 @@ import React,{useContext} from 'react';
 import styled from "styled-components";
 //component
 import Btn from "../Btn/Btn"
-import {OpenContext} from '../../Context/OpenContext'
+import {OpenContext} from '../../Container';
 import FormatListBulletedRoundedIcon from '@material-ui/icons/FormatListBulletedRounded';
 import KeyboardArrowDownRoundedIcon from '@material-ui/icons/KeyboardArrowDownRounded';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';

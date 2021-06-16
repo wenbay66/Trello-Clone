@@ -1,5 +1,10 @@
 import React from 'react';
 import styled,{keyframes} from "styled-components";
+//component
+import Button from './Button';
+//icon
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import MoreOutlinedIcon from '@material-ui/icons/MoreOutlined';
 const animat = keyframes`
   0% {
     right: -100%;
@@ -20,7 +25,12 @@ const Wrapper = styled.div`
 export default function More(){
     return(
         <Wrapper>
-            More
+          <Button MainTitle='設定' Component='SetUp'>
+            <SettingsOutlinedIcon />
+          </Button>
+          <Button MainTitle='標籤' Component='SetTag'>
+            <MoreOutlinedIcon />
+          </Button>
         </Wrapper>
     )
 }

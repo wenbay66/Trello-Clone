@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React from 'react';
 import styled from "styled-components";
 //component
 import Btn from "../Btn/Btn"
@@ -46,7 +46,7 @@ const ImgDIV = styled.div`
   background-repeat: no-repeat;
 `
 export default function Header({Theme}){
-  const ColorMap = {'#0079BF':'#1467A3', '#D29034':'#B37B2C', '#519839':'#458130', '#B04632':'#963C2B', '#89609E':'#755286', '#CD5A91':'#AE4D7C', '#4BBF6B':'#40A35B', '#00AECC':'#2194AE', '#838C91':'#70777B'}
+  const ColorMap = {'#1A79BF':'#1467A3', '#D29034':'#B37B2C', '#519839':'#458130', '#B04632':'#963C2B', '#89609E':'#755286', '#CD5A91':'#AE4D7C', '#4BBF6B':'#40A35B', '#00AECC':'#2194AE', '#838C91':'#70777B'}
   return (
     <Container color={Theme.type === 'color' ? ColorMap[Theme.value] : ''} BgUrl={Theme.type === 'url' ? Theme.value : ''}>
       <ContainerDIV paddingLeft='4px'>
