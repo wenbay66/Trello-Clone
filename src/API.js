@@ -14,5 +14,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 // 驗證完成後即可連線至 Firebase
 const db = firebase.firestore();
+export const update = firebase.firestore;
 export default db;
   

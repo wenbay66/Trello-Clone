@@ -1,11 +1,15 @@
 import React from "react";
 //component
 import Tag from './Tag';
-
+import CardPanel from '../../CardPanel';
+import ModifyCard from "./ModifyCard";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 //icon
 import CreateIcon from '@material-ui/icons/Create';
+//context
+//import {TagContext} from '../../Container';
+//import {CardContext} from './Wrapper';
 
 const Icon = styled.span`
   position: absolute;
@@ -18,7 +22,7 @@ const Icon = styled.span`
     background-color: #EDEEF2;
   }
 `
-const Root = styled.div`
+const Wrapper = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -34,10 +38,25 @@ const Root = styled.div`
     opacity: 1;
   };
 `
-export default function Card({ card, index, TagData }) {
-  
+export default function Card(props) {
+  const {card, ListTitle, ListID, index, AllTagData, setAllTagData, AllCardData, setAllCardData, UpdateCardContext} = props;
+  //const { AllTagData, setAllTagData } = useContext(TagContext);
+  //const { AllCardData, setAllCardData } = useContext(CardContext);
   const OpenCard = () => {
-    alert('123')
+    let paraObj = {
+      AllTagData: AllTagData,                //source: src/Container.js
+      setAllTagData: setAllTagData,          //source: src/Container.js
+      AllCardData: AllCardData,              //sourec: src/List/Wrapper.js
+      setAllCardData: setAllCardData,        //sourec: src/List/Wrapper.js
+      UpdateCardContext: UpdateCardContext,  //source: src/List/Wrapper.js
+      card: card,
+      ListTitle: ListTitle,
+      ListID: ListID
+    }
+    CardPanel.open({
+      paraObj,
+      component: ModifyCard
+    });
   }
   const EditCard = (event) => {
     event.stopPropagation();
@@ -47,13 +66,13 @@ export default function Card({ card, index, TagData }) {
     <Draggable draggableId={card.id} index={index}>
       {(provided) => (
         <div ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}>
-          <Root onClick={OpenCard}>
+          <Wrapper onClick={OpenCard}>
             <Icon onClick={EditCard}>
               <CreateIcon style={{fontSize:'12px',color:'#5e6c84'}} />
             </Icon>
             <Tag tagID={card.tagID} />
             <span>{card.context}</span>         
-          </Root>
+          </Wrapper>
         </div>  
       )}
     </Draggable>

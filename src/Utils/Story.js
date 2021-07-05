@@ -14,6 +14,35 @@ const cards = [
     context: "Takeing you out"
   }
 ];
+//卡片詳細資料
+const cardDta = {
+  'card-4': {
+    description: '我是測試描述1',
+    todoList: [
+      {
+        todo: '事情1',
+        done: true,
+      },
+      {
+        todo: '事情2',
+        done: false
+      }
+    ]
+  },
+  'card-5': {
+    description: '我是測試描述2',
+    todoList: [
+      {
+        todo: '事情1',
+        done: true,
+      },
+      {
+        todo: '事情2',
+        done: true
+      }
+    ]
+  }
+}
 const data = {
   lists: {
     "list-1": {
@@ -26,13 +55,38 @@ const data = {
       title: "DOING",
       cards: [
         {
-          id: "card-4",
+          id: "card_4",
           context: "clone product",
           tagID: "tag-1"
         },
         {
           id: "card-5",
           context: "this is MIT",
+          tagID: "tag-2"
+        },
+        {
+          id: "card-6",
+          context: "test6",
+          tagID: "tag-2"
+        },
+        {
+          id: "card-7",
+          context: "test7",
+          tagID: "tag-2"
+        },
+        {
+          id: "card-8",
+          context: "test8",
+          tagID: "tag-2"
+        },
+        {
+          id: "card-9",
+          context: "test9",
+          tagID: "tag-2"
+        },
+        {
+          id: "card-10",
+          context: "test10",
           tagID: "tag-2"
         }
       ]

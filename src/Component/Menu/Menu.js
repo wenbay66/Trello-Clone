@@ -3,7 +3,7 @@ import React,{useState} from 'react';
 import Title from "./Title";
 import Container from './Container';
 //temp
-import SetTag from './SetTag';
+//import SetTag from './SetTag';
 
 const MODAL_STYLE = {
   backgroundColor: '#F4F5F7',
@@ -25,13 +25,9 @@ const CONTAINER = {
 export const GoNextContext = React.createContext();
 
 export default function Menu({isOpen, handleClose}){
-  //const [TitleTextList, setTitleTextList] = useState([]);
-  //const [ComponentList, setComponentList] = useState([]);
-  //const [Component, setComponent] = useState(null);
-  //temp
-  const [TitleTextList, setTitleTextList] = useState(['標籤']);
-  const [ComponentList, setComponentList] = useState(['SetTag']);
-  const [Component, setComponent] = useState(<SetTag />);
+  const [TitleTextList, setTitleTextList] = useState([]);
+  const [ComponentList, setComponentList] = useState([]);
+  const [Component, setComponent] = useState(null);
   //回上一個 Component
   const GoBack = () => {
     const _ComponentList = [...ComponentList];

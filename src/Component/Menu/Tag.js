@@ -38,23 +38,11 @@ const Icon = styled.div`
         background-color: rgba(9, 30, 66, .08)
     }
 `
-const Tag = ({data, openPanel}) => {
+//負責顯示用，click時回傳 client位置
+const Tag = ({data, dataIndex, fnc}) => {
     const Ref = useRef();
-    const handleClick = (event) => {
-        const client = Ref.current.getBoundingClientRect();
-        //top、left、width、tagName
-        const Top = client.y + client.height + 2; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
-        const Left = client.x + 16;               //加上半個 icon 的寬度比較好看
-        const width = client.width - 16;          //需扣掉半個 icon 寬度
-        const tagData = {
-           tagID: data.tagID,
-           tagName: data.tagName,
-           bgColor: data.bgColor
-        }
-        openPanel(Top, Left, width, tagData);
-    }
     return(
-        <Wrapper ref={Ref} onClick={handleClick}>
+        <Wrapper ref={Ref} onClick={() => fnc(Ref.current.getBoundingClientRect(), dataIndex)}>
             <Container bgColor={data.bgColor}>
                 {data.tagName}
             </Container>

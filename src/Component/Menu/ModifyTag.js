@@ -59,7 +59,9 @@ const Button = styled.button`
     background-color: ${props => props.hoverColor ? props.hoverColor : null};
   }
 `
-const ModifyTag = ({close, parentRef, tagData, AllTagData, setAllTagData}) => {
+const ModifyTag = ({close, parentRef, propsObj}) => {
+  
+  const {tagData, AllTagData, setAllTagData} = propsObj ? propsObj : null;
   //AllTagData、setAllTagData => Tag.js傳進來的參數(Context資料)。
   //tagData提供三個 value => tagName, bgColor, tagID
   const [Title, setTitle] = useState(tagData ? tagData.tagName : '');        //標籤名稱
@@ -84,8 +86,8 @@ const ModifyTag = ({close, parentRef, tagData, AllTagData, setAllTagData}) => {
     if(!tagData){ //tagData為空代表要建立新標籤
       const newData = { 'tagName': Title, 'bgColor':TagColor, 'tagID': uuid() };
       _AllTagData.push(newData);
-      //之後需增加 call api 更新 firestore
       setAllTagData(_AllTagData);
+      //call api 更新數據庫
       close();
       return;
     }
@@ -104,8 +106,9 @@ const ModifyTag = ({close, parentRef, tagData, AllTagData, setAllTagData}) => {
         const index = AllTagData.findIndex(item => tagData.tagID === item.tagID);
         _AllTagData[index].tagName = Title;
         _AllTagData[index].bgColor = TagColor;
-        //之後需增加 call api 更新 firestore
         setAllTagData(_AllTagData);
+        //call api 更新遠端數據庫
+
         close();
       }
     }
@@ -157,7 +160,7 @@ const ModifyTag = ({close, parentRef, tagData, AllTagData, setAllTagData}) => {
           hoverColor='#156AA7' 
           onClick={Submit}
         >
-        {tagData ? '儲存' : '新建'}
+        {propsObj.tagData ? '儲存' : '新建'}
         </Button>  
         <Button   
           bgColor="#b04632" 

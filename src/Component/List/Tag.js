@@ -12,7 +12,8 @@ import styled from "styled-components";
 `;*/
 const Wrapper = styled.div`
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    margin-bottom: ${props => props.tagID ? '8px' : null};
 `
 const Div = styled.div`
     font-weight: 700;
@@ -45,15 +46,18 @@ export default function Tag({tagID}) {
         setShowMode(!ShowMode);
     }
     useEffect(() => {
-        if(AllTagData && tagID){
-            let data = AllTagData.find(e => e.tagID === tagID);
+        if(AllTagData && tagID){ //tagID是陣列
+            //let data = AllTagData.find(e => e.tagID === tagID);
+            let data = AllTagData.filter(item => tagID.includes(item.tagID))
             setData(data);
         }
     },[AllTagData, tagID])
     return (
-        <Wrapper>
+        <Wrapper tagID={tagID}>
             {tagID && Data ? (
-                <Div onClick={fnc} bgColor={Data.bgColor}>{ShowMode ? Data.tagName : ''}</Div>
+                Data.map((item, index) => {
+                    return <Div key={index} onClick={fnc} bgColor={item.bgColor}>{ShowMode ? item.tagName : ''}</Div>
+                })
             ) : (
                 <div />
             )}

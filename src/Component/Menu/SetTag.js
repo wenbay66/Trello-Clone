@@ -1,10 +1,11 @@
 import React,{useState, useEffect, useContext, useRef} from 'react';
 import styled,{keyframes} from "styled-components";
 //component
-import {TagContext} from '../../Container';
 import Panel from '../../Panel';
 import Tag from './Tag';
 import ModifyTag from './ModifyTag';
+//context
+import {TagContext} from '../../Container';
 
 const animat = keyframes`
   0% {
@@ -70,31 +71,36 @@ const SetTag = () => {
   //all Tag data in json format.
   const {AllTagData, setAllTagData} = useContext(TagContext);
   const btnRef = useRef();
-  //trigger panel's function to open <Panel />.
-  const openPanel = ( Top, Left, width, tagData) => {
-    Panel.open({
-      Top,
-      Left,
-      width,
-      tagData,
-      AllTagData: AllTagData,       
-      setAllTagData: setAllTagData,
-      component: ModifyTag
-     })
-  }
+  //建立全新標籤
   const CreateTag = (event) => {
     const client = btnRef.current.getBoundingClientRect();
     //top、left、width、tagName
-    const Top = client.y + client.height + 2; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
-    const Left = client.x;               //加上半個 icon 的寬度比較好看
-    const width = client.width;          //需扣掉半個 icon 寬度
-    openPanel(Top, Left, width, null);
+    const Top = `${client.y + client.height + 2}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
+    const Left = `${client.x}px`;                    //加上半個 icon 的寬度比較好看
+    const width = `${client.width}px`;               //需扣掉半個 icon 寬度
+    const propsObj = { //有參數統一塞進這裡
+      AllTagData: AllTagData,
+      setAllTagData: setAllTagData
+    };
+    Panel.open({Top, Left, width, propsObj, component: ModifyTag, Title: '新增標籤'})
+  }
+  const fnc = (client, tagIndex) => {
+    //top、left、width、tagName
+    const Top = `${client.y + client.height + 2}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
+    const Left = `${client.x + 16}px`;               //加上半個 icon 的寬度比較好看
+    const width = `${client.width - 16}px`;          //需扣掉半個 icon 寬度
+    const propsObj = {
+      tagData: AllTagData[tagIndex],
+      AllTagData: AllTagData,
+      setAllTagData: setAllTagData
+    }
+    Panel.open({Top, Left, width, propsObj, component: ModifyTag, Title: '修改標籤'})
   }
   //get tag data .
   useEffect(() => {
     if (AllTagData === null) return;
     const _UIdata = AllTagData.map((item,index) => {
-      return <Tag data={item} key={index} openPanel={openPanel} />
+      return <Tag data={item} key={index} dataIndex={index} fnc={fnc} />
     })
     setUIdata(_UIdata);
     setoriUIdata(_UIdata);
@@ -109,7 +115,7 @@ const SetTag = () => {
       };
       const data = AllTagData.map((item,index) => {
         let tagName = item.tagName.toUpperCase();
-        return tagName.indexOf(SearchText.toUpperCase()) !== -1 ? <Tag data={item} key={index} openPanel={openPanel} /> : null;
+        return tagName.indexOf(SearchText.toUpperCase()) !== -1 ? <Tag data={item} key={index} dataIndex={index} fnc={fnc} /> : null;
       })
       setUIdata(data);
     }

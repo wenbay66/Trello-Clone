@@ -11,14 +11,14 @@ import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
 
 const Container = styled.div`
-    max-height: 40px;
-    min-height: 40px;
-    box-sizing: border-box;
-    background: ${props => props.color ? props.color : ''};
-    padding: 4px 8px 4px 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  max-height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 4px 8px 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `
 const ContainerDIV = styled.div`
   display: flex;
@@ -46,9 +46,8 @@ const ImgDIV = styled.div`
   background-repeat: no-repeat;
 `
 export default function Header({Theme}){
-  const ColorMap = {'#1A79BF':'#1467A3', '#D29034':'#B37B2C', '#519839':'#458130', '#B04632':'#963C2B', '#89609E':'#755286', '#CD5A91':'#AE4D7C', '#4BBF6B':'#40A35B', '#00AECC':'#2194AE', '#838C91':'#70777B'}
   return (
-    <Container color={Theme.type === 'color' ? ColorMap[Theme.value] : ''} BgUrl={Theme.type === 'url' ? Theme.value : ''}>
+    <Container>
       <ContainerDIV paddingLeft='4px'>
         <span>
           <Btn>

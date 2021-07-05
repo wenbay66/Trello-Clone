@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Storyapi from "../../Utils/Storyapi";
+import { CardContext } from './Wrapper';
 const useStyle = makeStyles((theme) => ({
   root: {
     color: "#172b4d",
@@ -38,7 +38,7 @@ export default function Title({ title, listId }) {
   const [Open, setOpen] = useState(false);
   const [NewTitle, setNewTitle] = useState(title);
   const inputRef = useRef();
-  const { UpDateTitle } = useContext(Storyapi);
+  const { UpDateTitle } = useContext(CardContext);
   const handleChange = (e) => {
     setNewTitle(e.target.value);
   };

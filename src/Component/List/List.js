@@ -1,8 +1,11 @@
-import React from "react";
+import React,{ useContext } from "react";
 //component
 import Title from "./Title";
 import Card from "./Card";
 import InputContainer from "./InputContainer";
+//context
+import {TagContext} from '../../Container';
+import {CardContext} from './Wrapper';
 //api
 //import { makeStyles } from "@material-ui/core/styles";
 //import { Paper } from "@material-ui/core";
@@ -18,9 +21,24 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 }));*/
 export default function List({ list, index }) {
   //const classes = useStyle();
-  const CardData = list.cards.map((card, index) => {
-    return <Card card={card} key={card.id} index={index} />;
-  })
+  const { AllTagData, setAllTagData } = useContext(TagContext);
+  const { AllCardData, setAllCardData, UpdateCardContext } = useContext(CardContext);
+  const CardData = list.cards ? list.cards.map((card, index) => {
+    return (
+      <Card
+        key={card.id} 
+        ListTitle={list.title}
+        ListID={list.id}
+        card={card} 
+        AllTagData={AllTagData}
+        setAllTagData={setAllTagData}
+        AllCardData={AllCardData}
+        setAllCardData={setAllCardData}
+        UpdateCardContext={UpdateCardContext}
+        index={index}
+      />
+    );
+  }) : null;
   const root = {
     width: "300px",
     backgroundColor: "#EBECF0",

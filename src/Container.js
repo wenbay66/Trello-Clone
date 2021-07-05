@@ -6,7 +6,7 @@ import Menu from "./Component/Menu/Menu";
 //API
 //import db from '../src/API';
 export const OpenContext = React.createContext();
-
+export const TagContext = React.createContext();
 const Container = () => {
   const [isOpen, setisOpen] = useState(true);
   const [AllTagData, setAllTagData] = useState(null);   //標籤資料
@@ -16,7 +16,29 @@ const Container = () => {
   //const ToggleShowMode = () => {
     //setShowMode(false)
   //}
-  //之後要改成串接firebase API
+   useEffect(() => {
+    /*async function getData(){
+      await db.collection('Tag')
+      .where('tagName', '==', 'Node.js')
+      .where('is', '==', true)
+      .get()
+      .then(res => setdc(res))
+    }*/
+    /*async function getData(){
+      await db.collection('CardData')
+      .doc('89bPPi30npQyIxbMxOeg')
+      .collection('lists')
+      .doc('tgMGVScX90ZuK4dj2vcL')
+      .get()
+      .then(res => {
+        console.log(res.data())
+        //let dc = res.docs.map(el => el);
+        //console.log(dc)
+      })
+    }*/
+    //getData();
+  },[])
+  //TagData之後要改成串接firebase API
   useEffect(() => {
     const TestTagData = [
       {
@@ -45,23 +67,14 @@ const Container = () => {
         bgColor: '#1A79BF'
       },
       {
-        tagID: 'xxx',
+        tagID: 'tag-6',
         tagName: 'Vue.js',
         bgColor: '#61BD50'
       }
     ]
     setAllTagData(TestTagData)
   },[])
-  /*useEffect(() => {
-    async function getData(){
-      await db.collection('Tag')
-      .where('tagName', '==', 'Node.js')
-      .where('is', '==', true)
-      .get()
-      .then(res => setdc(res))
-    }
-    getData();
-  },[])*/
+ 
   const _Container = {
     display: 'flex',
     height: 'calc(100% - 40px)'
@@ -102,5 +115,5 @@ const Container = () => {
     </div>
   )
 }
-export const TagContext = React.createContext();
+
 export default Container;

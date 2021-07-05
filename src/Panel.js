@@ -47,6 +47,55 @@ const Container = styled.div`
 class Panel extends React.Component{
   constructor(props) {
     super(props);
+    this.state = { active: false, Top: '0', Left: '0', tagData: {}, component: null, Title: null};
+    this.parentRef = React.createRef();
+  }
+  
+  open = (para) => {//彈出層接收參數
+    const { Top, Left, width, component, propsObj, Title} = para;  //此時component取得的會是'構造函數(Constructor)'
+    const _key = new Date().getTime();
+    //此時產生的 ＿component 才是可渲染的組件
+    const _component = React.createElement(component,{
+       key: _key,
+       close:this.close,             //傳遞用來關閉彈出層的方法。
+       parentRef: this.parentRef,    //click Panel 以外的地方也要關閉 Panel
+       propsObj: propsObj            //有任何參數要帶進去就丟到propsObj內
+    })
+    //更新 State
+    this.setState({
+      active: true,//打開彈出層
+      Top: Top,
+      Left: Left,
+      width: width,
+      Title: Title,
+      component:_component,//打開彈出層時渲染的組件
+    })
+  }
+  //關閉 Panel
+  close = () => {
+    this.setState({ active:false, component: null });
+  }
+  
+  render(){
+    return(
+      <Wrapper ref={this.parentRef} active={this.state.active} Top={this.state.Top} Left={this.state.Left} width={this.state.width}>
+        <Header>
+          <Title>{this.state.Title}</Title>
+          <Icon onClick={this.close}>
+            <CloseIcon />
+          </Icon>
+        </Header>  
+        <Hr />
+        <Container>
+          {this.state.component}
+        </Container>
+      </Wrapper>
+    )
+  }
+}
+/*class Panel extends React.Component{
+  constructor(props) {
+    super(props);
     this.state = {
       active: false,
       Top: '0',
@@ -97,7 +146,7 @@ class Panel extends React.Component{
       </Wrapper>
     )
   }
-}
+}*/
 //新增一個 div
 const _div = document.createElement('div');
 //將新增的 div 渲染到 UI
