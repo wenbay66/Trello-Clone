@@ -47,8 +47,8 @@ export default function Card(props) {
       'card': card
     }
     CardPanel.open({
-      'paraObj': paraObj,
-      'component': ModifyCard
+      'component': ModifyCard,  //CardPanel要渲染的組件
+      'paraObj': paraObj        //帶進ModifyCard.js 的傳參
     });
   }
   const EditCard = (event) => {

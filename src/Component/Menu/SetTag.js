@@ -1,11 +1,11 @@
-import React,{useState, useEffect, useContext, useRef} from 'react';
+import React,{useState, useEffect, useRef} from 'react';
 import styled,{keyframes} from "styled-components";
 //component
 import Panel from '../../Panel';
 import Tag from './Tag';
 import ModifyTag from './ModifyTag';
 //context
-import {TagContext} from '../../Container';
+//import {TagContext} from '../../Container';
 
 const animat = keyframes`
   0% {
@@ -62,11 +62,12 @@ const Button = styled.button`
     background-color: #E2E4E9;
   }
 `
-const SetTag = () => {
+const SetTag = ({TagContext_Obj}) => {
   const [UIdata, setUIdata] = useState(null);
   const [oriUIdata, setoriUIdata] = useState(null);
   const [SearchText, setSearchText] = useState('');
-  const {TagContext_Obj} = useContext(TagContext);
+  //const {TagContext_Obj} = useContext(TagContext);
+  //const {AllTagData, setAllTagData} = TagContext_Obj;
   const {AllTagData, setAllTagData} = TagContext_Obj;
   const btnRef = useRef();
   //建立全新標籤
@@ -103,7 +104,7 @@ const SetTag = () => {
     })
     setUIdata(_UIdata);
     setoriUIdata(_UIdata);
-  },[AllTagData])// eslint-disable-line react-hooks/exhaustive-deps
+  },[TagContext_Obj])// eslint-disable-line react-hooks/exhaustive-deps
   //According SearchText change UI data.
   useEffect(() => {
     const search = () => {
@@ -126,6 +127,7 @@ const SetTag = () => {
         clearTimeout(timeoutID)
     }
   },[SearchText,oriUIdata])// eslint-disable-line react-hooks/exhaustive-deps
+  console.log('<-- setTag -->')
   return(
       <Wrapper>
         <SearchBox placeholder='搜尋標籤...' onChange={(e) => setSearchText(e.target.value)} />

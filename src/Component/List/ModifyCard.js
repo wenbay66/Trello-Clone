@@ -5,7 +5,6 @@ import Header from '../Card/Header';
 import Container from '../Card/Container';
 //icon
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-
 const Wrapper = styled.div`
   background: #F4F5F7;
   width: 40%;
@@ -43,8 +42,7 @@ const Span = styled.span`
 `
 export const ModifyContext = React.createContext();
 const ModifyCard = ({ close, parentRef, paraObj }) => {
-  //paraObj內容
-  //const { AllTagData, setAllTagData, AllCardData, setAllCardData, card, ListTitle } = paraObj;
+  //const { List_Obj, CardContext_Obj, TagContext_Obj, card(當前卡片) } = paraObj; ===> paraObj內容
   const { card, List_Obj } = paraObj;
   const { ListTitle } = List_Obj;
   return(

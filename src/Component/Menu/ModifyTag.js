@@ -60,7 +60,6 @@ const Button = styled.button`
   }
 `
 const ModifyTag = ({close, parentRef, propsObj}) => {
-  
   const {tagData, AllTagData, setAllTagData} = propsObj ? propsObj : null;
   //AllTagData、setAllTagData => Tag.js傳進來的參數(Context資料)。
   //tagData提供三個 value => tagName, bgColor, tagID

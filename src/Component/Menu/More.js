@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import styled,{keyframes} from "styled-components";
 //component
 import Button from './Button';
 //icon
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import MoreOutlinedIcon from '@material-ui/icons/MoreOutlined';
+//context
+import {TagContext} from '../../Container';
 const animat = keyframes`
   0% {
     right: -100%;
@@ -23,14 +25,20 @@ const Wrapper = styled.div`
 `
 
 export default function More(){
-    return(
-        <Wrapper>
-          <Button MainTitle='設定' Component='SetUp'>
-            <SettingsOutlinedIcon />
-          </Button>
-          <Button MainTitle='標籤' Component='SetTag'>
-            <MoreOutlinedIcon />
-          </Button>
-        </Wrapper>
-    )
+  const {TagContext_Obj} = useContext(TagContext);
+  //propsObj用法參照Button.js
+  const tagProps = {
+    'Name': 'TagContext_Obj',
+    'Obj': TagContext_Obj
+  }
+  return(
+    <Wrapper>
+      <Button MainTitle='設定' Component='SetUp'>
+        <SettingsOutlinedIcon />
+      </Button>
+      <Button MainTitle='標籤' Component='SetTag' propsObj={tagProps}>
+        <MoreOutlinedIcon />
+      </Button>
+    </Wrapper>
+  )
 }

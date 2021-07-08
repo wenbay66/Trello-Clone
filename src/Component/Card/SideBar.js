@@ -58,7 +58,7 @@ const SideBar = ({CheckList, setCheckList}) => {
   const {paraObj} = useContext(ModifyContext);
 
   //開啟彈出層
-  const CreateToDoList = (client, name, ComponentName) => {
+  const fnc = (client, name, ComponentName) => {
     //top、left、width、tagName
     const Top = `${client.y + client.height + 5}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
     const Left = `${client.x}px`;   
@@ -75,7 +75,7 @@ const SideBar = ({CheckList, setCheckList}) => {
   }
   const UIdata = list.map((item, index) => {
     const Icon = item.icon;
-    const props = {fnc:CreateToDoList, ComponentName:item.ComponentName, name:item.name}
+    const props = {fnc:fnc, ComponentName:item.ComponentName, name:item.name}
     //console.log(item.name)
     return (
       <Box key={index} {...props} >
