@@ -41,10 +41,12 @@ const InputText = styled.div`
 `
 const Header = ({Icon, close}) => {
   //paraObj內容
-  //const { AllTagData, setAllTagData, AllCardData, setAllCardData, card } = paraObj;
   const inputRef = useRef();
   const { paraObj } = useContext(ModifyContext);
-  const { card, ListID, UpdateCardContext } = paraObj;
+  //const { card, ListID, UpdateCardContext } = paraObj;
+  const {card, List_Obj, CardContext_Obj} = paraObj;
+  const {ListID} = List_Obj;
+  const {UpdateCardContext} = CardContext_Obj;
   const [oriTitle, setoriTitle] = useState(card.context);// eslint-disable-line no-unused-vars
   const [Title, setTitle] = useState(card.context);
   const [isEditTitle, setisEditTitle] = useState(false);

@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from "styled-components";
-//import { update } from '../../../API';
 //context
 import { ToDoListContext } from '../Container';
 import { ModifyContext } from '../../List/ModifyCard';
 //api
 import { v4 as uuid } from "uuid";
+import db from '../../../API';
 //component
 import Panel from '../../../Panel';
+import InputArea from './InputArea';
 //icon
-import CloseIcon from '@material-ui/icons/Close';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 const Wrapper = styled.div`
 	display: flex;
@@ -77,17 +77,6 @@ const CheckBox = styled.input`
 		}
 	}
 `;
-const Textarea = styled.textarea`
-  color: #172b4d;
-  width: 100%;
-  border: 1px solid rgba(9,30,66,.13);
-  background: rgba(9,30,66,.04);
-  outline: none;
-  resize: none;
-  border-radius: 5px;
-  box-sizing: border-box;
-  padding: 8px 12px 8px 12px;
-`
 const Button = styled.button`
   background-color: ${props => props.bgColor ? props.bgColor : '#0079BF'};
   border-radius: 3px;
@@ -130,14 +119,15 @@ const PanelComponent = ({propsObj, parentRef, close}) => {
     </div>
   )
 }
-const ListItem = ({ToDo, Listid, Icon ,isDragging}) => {
+const ListItem = ({ToDo, Listid, card, Icon ,isDragging}) => {
 	const inputRef = useRef();
 	const Ref = useRef();
 	const [Checked, setChecked] = useState(false);                 //是否要顯示已完成
 	const [Edit, setEdit] = useState(false);
 	const [oriTitle, setoriTitle] = useState(ToDo.context);
-  const [newTitle, setnewTitle] = useState(ToDo.context);
-	const {CheckList, setCheckList} = useContext(ToDoListContext); //卡片的代辦清單
+  	const [newTitle, setnewTitle] = useState(ToDo.context);
+	const {ToDoListContext_Obj} = useContext(ToDoListContext); //卡片的代辦清單
+	const {CheckList, setCheckList} = ToDoListContext_Obj;
 	const {paraObj} = useContext(ModifyContext);                   //卡片列表資料
 	const { AllCardData, setAllCardData, ListID } = paraObj;       //卡片列表資料
 	useEffect(() => {
@@ -150,14 +140,13 @@ const ListItem = ({ToDo, Listid, Icon ,isDragging}) => {
 		}
 	},[Edit])// eslint-disable-line react-hooks/exhaustive-deps
 	const CheckedChange = event => {
-		const doneStatus = !Checked;
-		setChecked(doneStatus);
+		//const doneStatus = !Checked;
+		//setChecked(doneStatus);
 		//更新context資料
-		updateChecked(doneStatus);
+		updateChecked(!Checked);
 		//更新firebase
 	}
 	const updateChecked = (doneStatus) => {
-		//更新UI資料
 		//一張卡片可能有多個list，找到現在卡片所屬的list
 		let _ToDoList = JSON.parse(JSON.stringify(CheckList.find(List => List.id === Listid).ToDoList));
 		let index = CheckList.findIndex(List => List.id === Listid);
@@ -168,18 +157,21 @@ const ListItem = ({ToDo, Listid, Icon ,isDragging}) => {
       }
       return true;
     });
-		let newState = [...CheckList];
+		let newState = JSON.parse(JSON.stringify(CheckList));
 		newState[index].ToDoList = _ToDoList;
-		setCheckList(newState)
-		
+		setCheckList(newState);
 		//更新firebase資料
-	
+    //更新firebase
+    let docRef = db.collection('Card_ToDoList').doc(card.id);
+    docRef.set({
+      ListArray: newState
+    });
 	}
 	const handleClick = () => {
 		setEdit(true);
 	}
+  //修改待辦清單係向後按儲存
 	const handleSave = () => {
-		//更改UIdata
 		//一張卡片可能有多個list，找到現在卡片所屬的list
 		let _List = JSON.parse(JSON.stringify(CheckList.find(List => List.id === Listid)));
     const ListIndex = CheckList.findIndex(List => List.id === Listid);
@@ -192,10 +184,16 @@ const ListItem = ({ToDo, Listid, Icon ,isDragging}) => {
     });
 		let newState = [...CheckList];
     newState[ListIndex] = _List;
+    //更新 UIdata
     setCheckList(newState);
+    //更新 firebase
+    let docRef = db.collection('Card_ToDoList').doc(card.id);
+    docRef.set({
+      ListArray: newState
+    });
+    // 關閉輸入模式
 		setoriTitle(newTitle);
 		setEdit(false);
-		//更新firebase
 	}
 	const handleClose = () => {
 		setEdit(false);
@@ -207,20 +205,24 @@ const ListItem = ({ToDo, Listid, Icon ,isDragging}) => {
     const Left = `${client.x}px`;               
     const width = '330px';         
     let _component = PanelComponent;
-		//刪除帶辦細項
+		//刪除待辦細項
 		const deleteToDo = () => {
 			let _List = JSON.parse(JSON.stringify(CheckList.find(List => List.id === Listid)));
 			const ListIndex = CheckList.findIndex(List => List.id === Listid);
 			const newToDoList = _List.ToDoList.filter(todo => todo.id !== ToDo.id);
-			let newState = [...CheckList];
+			let newState = JSON.parse(JSON.stringify(CheckList));
 			_List.ToDoList = newToDoList;
 			newState[ListIndex] = _List;
 			//更新 context
 			setCheckList(newState);
 			//更新 firebase
-
+      let docRef = db.collection('Card_ToDoList').doc(card.id);
+      docRef.set({
+        ListArray: newState
+      });
+      console.log('delete success')
 		}
-		//帶辦細項轉成卡片
+		//待辦細項轉成卡片
 		const transToCard = () => {
 			const _list = AllCardData.lists[ListID];
 			const newCardId = uuid();
@@ -237,7 +239,13 @@ const ListItem = ({ToDo, Listid, Icon ,isDragging}) => {
 					[ListID]: _list
 				}
 			};
-			setAllCardData(newState);
+			//更新context
+      setAllCardData(newState);
+      //更新 firebase
+      let docRef = db.collection('Lists').doc(ListID);
+      docRef.set({
+        cards: _list.cards
+      });
 			deleteToDo();
 		}
     const propsObj = {deleteToDo, transToCard};
@@ -248,15 +256,13 @@ const ListItem = ({ToDo, Listid, Icon ,isDragging}) => {
 		setnewTitle(event.target.value)
 	}
 	const ContainerData = Edit ? (
-		<Container Edit={Edit} width='100%' direction='column' alignItems='flex-start'>
-			<Textarea ref={inputRef} value={newTitle} onChange={handleChange} />
-			<Container margin='5px 0 0 0'>
-        <Button onClick={handleSave}>儲存</Button>
-        <Icon cursor='pointer' onClick={handleClose}>
-          <CloseIcon fontSize='large' />
-        </Icon>
-      </Container>
-		</Container>
+    <InputArea
+      inputRef={inputRef} 
+      rows='2' 
+      value={newTitle} 
+      handle={{handleChange, handleSave, handleClose}}
+      Icon={Icon} 
+    />
 	) : (
 		<Span onClick={handleClick} IsChecked={Checked} >{ToDo.context}</Span>
 	)

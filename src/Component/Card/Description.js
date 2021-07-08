@@ -133,7 +133,7 @@ const Description = ({ Icon, card }) => {
         setOriValue(Obj.Description);
       }
     }
-    //getData();
+    getData();
   }, [])// eslint-disable-line react-hooks/exhaustive-deps
   //剛進入編輯模式時計算需要多少row
   useEffect(() => {

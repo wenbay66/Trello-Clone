@@ -20,8 +20,7 @@ export const CardContext = React.createContext();
 //React.memo => props有改變就-render
 const Wrapper = React.memo(function Wrapper() {
   const className = useStyle();
-  //const [data, setdata] = useState(Story);        //卡片資料
-  const [AllCardData, setAllCardData] = useState(null);        //卡片資料
+  const [AllCardData, setAllCardData] = useState(null);  //卡片資料
   //卡片資料(init render)串接firebase api
   useEffect(() => {
     async function getData(){
@@ -173,7 +172,7 @@ const Wrapper = React.memo(function Wrapper() {
     //更新UI畫面
     setAllCardData(newState);
   };
-  //更新卡片context
+  //更新卡片名稱
   const UpdateCardContext = (NewCardContext, ListID, card) => {
     //更新 UI data
     const cards = AllCardData.lists[ListID].cards; //卡片所屬的列表所有資料 => AllCardData.lists[ListID];

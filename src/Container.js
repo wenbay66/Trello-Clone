@@ -1,4 +1,5 @@
 import React,{useState, useEffect} from 'react';
+import styled from "styled-components";
 //Component
 import Wrapper from "./Component/List/Wrapper";
 import TopBar from "./Component/TopBar/TopBar";
@@ -7,37 +8,25 @@ import Menu from "./Component/Menu/Menu";
 //import db from '../src/API';
 export const OpenContext = React.createContext();
 export const TagContext = React.createContext();
+const WrapperContainer = styled.div`
+  display: flex;
+  height: calc(100% - 40px);
+`
+const LeftContainer = styled.div`
+  width: ${props => props.isOpen ? '80%' : '100%'};
+  height: 100%;
+  transition: width .1s ease-in
+`
+const RightContainer = styled.div`
+  width: ${props => props.isOpen ? '20%' : '0%'};
+  position: relative;
+  transition: width .1s ease-in;
+  height: 100%;
+`
 const Container = () => {
   const [isOpen, setisOpen] = useState(true);
   const [AllTagData, setAllTagData] = useState(null);   //標籤資料
-  const [ShowMode, setShowMode] = useState(true); //標籤顯示模式
-  //const [dc, setdc] = useState(null);
-  //切換標籤 精簡、複雜 模式
-  //const ToggleShowMode = () => {
-    //setShowMode(false)
-  //}
-   useEffect(() => {
-    /*async function getData(){
-      await db.collection('Tag')
-      .where('tagName', '==', 'Node.js')
-      .where('is', '==', true)
-      .get()
-      .then(res => setdc(res))
-    }*/
-    /*async function getData(){
-      await db.collection('CardData')
-      .doc('89bPPi30npQyIxbMxOeg')
-      .collection('lists')
-      .doc('tgMGVScX90ZuK4dj2vcL')
-      .get()
-      .then(res => {
-        console.log(res.data())
-        //let dc = res.docs.map(el => el);
-        //console.log(dc)
-      })
-    }*/
-    //getData();
-  },[])
+  const [ShowMode, setShowMode] = useState(true);       //標籤顯示模式
   //TagData之後要改成串接firebase API
   useEffect(() => {
     const TestTagData = [
@@ -74,45 +63,23 @@ const Container = () => {
     ]
     setAllTagData(TestTagData)
   },[])
- 
-  const _Container = {
-    display: 'flex',
-    height: 'calc(100% - 40px)'
-  }
-  const _Left = {
-    width: isOpen ? '80%' : '100%',
-    height: '100%',
-    transition: 'width .1s ease-in',
-  }
-  const _Right = {
-    width: isOpen ? '20%' : '0%',
-    position: 'relative',
-    transition: 'width .1s ease-in',
-    height: '100%'
-  }
-  /*const test = () => {
-    let docs = dc.docs.map(element => {
-      return element.data()
-    });
-    let doc = dc.docs.find(element => {
-      return element.data()
-    })
-    console.log(docs)
-  }*/
+  const TagContext_Obj = {AllTagData, setAllTagData, ShowMode, setShowMode}
   return(
-    <div style={_Container}>
+    <WrapperContainer>
       <OpenContext.Provider value={{isOpen, setisOpen}}>
-        <TagContext.Provider value={{AllTagData, setAllTagData, ShowMode, setShowMode}}>
-          <div style={_Left}>
+        <TagContext.Provider value={{TagContext_Obj}}>
+          <LeftContainer isOpen={isOpen}>
             <TopBar />
             <Wrapper />
-          </div>
-          <div style={_Right}>
-            {isOpen ? <Menu isOpen={isOpen} handleClose={() => setisOpen(false)} /> : ''}
-          </div>
+          </LeftContainer>
+          <RightContainer isOpen={isOpen}>
+            {isOpen ? (
+              <Menu isOpen={isOpen} handleClose={() => setisOpen(false)} />
+            ) : null}
+          </RightContainer>
         </TagContext.Provider>
       </OpenContext.Provider>
-    </div>
+    </WrapperContainer>
   )
 }
 

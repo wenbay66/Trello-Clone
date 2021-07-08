@@ -4,7 +4,7 @@ import styled from "styled-components";
 //import { ModifyContext } from '../../List/ModifyCard';
 //api
 import { v4 as uuid } from "uuid";
-import db, { update } from '../../../API';
+import db from '../../../API';
 const Wrapper = styled.div`
   
 `

@@ -63,13 +63,11 @@ const Button = styled.button`
   }
 `
 const SetTag = () => {
-  //in this component, we only get new Tag data in Context.
-  //any modify will only change Context data.
   const [UIdata, setUIdata] = useState(null);
   const [oriUIdata, setoriUIdata] = useState(null);
   const [SearchText, setSearchText] = useState('');
-  //all Tag data in json format.
-  const {AllTagData, setAllTagData} = useContext(TagContext);
+  const {TagContext_Obj} = useContext(TagContext);
+  const {AllTagData, setAllTagData} = TagContext_Obj;
   const btnRef = useRef();
   //建立全新標籤
   const CreateTag = (event) => {
@@ -84,6 +82,7 @@ const SetTag = () => {
     };
     Panel.open({Top, Left, width, propsObj, component: ModifyTag, Title: '新增標籤'})
   }
+  //修改標籤
   const fnc = (client, tagIndex) => {
     //top、left、width、tagName
     const Top = `${client.y + client.height + 2}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看

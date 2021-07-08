@@ -37,7 +37,11 @@ const TagContainer = ({Icon}) => {
   //paraObj內容
   //const { AllTagData, setAllTagData, AllCardData, setAllCardData, card } = paraObj;
   const { paraObj } = useContext(ModifyContext);
-  const {AllTagData, card} = paraObj;
+  const {TagContext_Obj, card} = paraObj;
+  console.log('TagContext_Obj')
+  console.log(TagContext_Obj)
+  const {AllTagData} = TagContext_Obj;
+  //const {AllTagData, card} = paraObj;
   //標籤陣列
   const BtnArray = AllTagData.map((item, index) => {
     let array = card.tagID;

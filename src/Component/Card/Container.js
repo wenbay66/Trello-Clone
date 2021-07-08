@@ -31,8 +31,6 @@ const Container = ({Icon, card}) => {
     async function getDate(){
       let docRef = await db.collection('Card_ToDoList').doc(card.id);
       let docObj = await docRef.get().then(doc => doc.exists ? doc.data() : null);
-      console.log('<---  docObj --->');
-      console.log(docObj)
       if(docObj === null) return;
       setCheckList(docObj.ListArray)
     }
@@ -41,7 +39,7 @@ const Container = ({Icon, card}) => {
   //待辦清單資料(測試環境)
   useEffect(() => {
     //data format
-    /*const Example = [
+    const Example = [
       {
         id: '1qaz2wsx',
         title: '元件清單',
@@ -75,15 +73,19 @@ const Container = ({Icon, card}) => {
         ]
       }
     ];
-    setCheckList(Example);*/
+    //setCheckList(Example);
   }, [])
+  const ToDoListContext_Obj = {
+    'CheckList': CheckList,
+    'setCheckList': setCheckList
+  } 
   return(
     <Wrapper>
-      <ToDoListContext.Provider value={{CheckList, setCheckList}}>
+      <ToDoListContext.Provider value={{ToDoListContext_Obj}}>
         <Left>
           <TagContainer Icon={Icon} />
-          <Description Icon={Icon} card={card} />
-          <ListContainer Icon={Icon} />
+          <Description card={card} Icon={Icon} />
+          <ListContainer card={card} Icon={Icon} />
         </Left>
         <Right>
           <SideBar card={card} CheckList={CheckList} setCheckList={setCheckList} />

@@ -7,6 +7,8 @@ import { ToDoListContext } from '../Container';
 //icon
 import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
 import CloseIcon from '@material-ui/icons/Close';
+//api
+import db from '../../../API';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -78,7 +80,7 @@ const PanelComponent = ({propsObj, close}) => {
     </div>
   )
 }
-const ListTitle = ({Icon, title, Listid, ToDoList, Hidden, setHidden}) => {
+const ListTitle = ({Icon, card, title, Listid, ToDoList, Hidden, setHidden}) => {
   const [ItemNum, setItemNum] = useState();
   const [Edit, setEdit] = useState(false);
   const [oriTitle, setoriTitle] = useState(title);
@@ -105,11 +107,14 @@ const ListTitle = ({Icon, title, Listid, ToDoList, Hidden, setHidden}) => {
     const client = ref.current.getBoundingClientRect();
     //更新UIdata
     const fnc = () => {
-      const index = CheckList.findIndex(List => List.id === Listid);
-      let newState = [...CheckList];
-      newState.splice(index, 1);
-      newState.length === 0 ? setCheckList(null) : setCheckList(newState);
-      //setCheckList(newState);
+      //更新UIdata
+      const newState = CheckList.filter(List => List.id !== Listid);
+      setCheckList(newState);
+      //更新firebase
+      let docRef = db.collection('Card_ToDoList').doc(card.id);
+      docRef.set({
+        ListArray: newState
+      });
     }
     //開dialog做confirm
     const Top = `${client.y + client.height + 2}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
@@ -118,7 +123,6 @@ const ListTitle = ({Icon, title, Listid, ToDoList, Hidden, setHidden}) => {
     let _component = PanelComponent;
     const propsObj = {fnc, btnName:`刪除${newTitle}`};
     Panel.open({Top, Left, width, propsObj, component: _component, Title: `要刪除 ${newTitle} 嗎?`});
-    //更新firebase
   }
   //編輯模式時點擊儲存
   const handleSave = () => {
@@ -134,7 +138,10 @@ const ListTitle = ({Icon, title, Listid, ToDoList, Hidden, setHidden}) => {
     newState[index] = _List;
     setCheckList(newState);
     //更新firebase
-
+    let docRef = db.collection('Card_ToDoList').doc(card.id);
+    docRef.set({
+      ListArray: newState
+    });
   }
   const handleClose = () => {
     setEdit(false);

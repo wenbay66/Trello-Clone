@@ -10,15 +10,25 @@ const Wrapper = styled.div`
   flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Noto Sans, Ubuntu, Droid Sans, Helvetica Neue, sans-serif;
 `
-const ListContainer = ({Icon}) => {
+const ListContainer = ({card, Icon}) => {
   //const [UIdata, setUIdata] = useState(null);
-  const {CheckList, setCheckList} = useContext(ToDoListContext);
-  
+  const {ToDoListContext_Obj} = useContext(ToDoListContext);
+  const {CheckList, setCheckList} = ToDoListContext_Obj;
   return(
     <Wrapper>
       {CheckList? (
         CheckList.map((list, index) => {
-          return <List key={index} index={index} list={list} Icon={Icon} setCheckList={setCheckList} />
+          return (
+            <List 
+              key={index} 
+              index={index} 
+              list={list}
+              card={card} 
+              Icon={Icon} 
+              CheckList={CheckList} 
+              setCheckList={setCheckList} 
+            />
+          )
         })
       ) : null}
     </Wrapper>

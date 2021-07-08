@@ -2,14 +2,6 @@ import React,{useState, useEffect, useContext } from 'react';
 //context
 import { TagContext } from '../../Container';
 import styled from "styled-components";
-/*const animat = keyframes`
-    0% {
-        width: 30px;
-    }   
-    100% {
-        width: auto;
-    }animation: ${animat} 2s ease-in;
-`;*/
 const Wrapper = styled.div`
     display: flex;
     justify-content: flex-start;
@@ -38,29 +30,29 @@ const Div = styled.div`
     }
 `
 export default function Tag({tagID}) {
-    const [Data, setData] = useState(null)
-    const {AllTagData, ShowMode, setShowMode} = useContext(TagContext);
-    //改成顯示精簡模式
-    const fnc = (event) => {
-        event.stopPropagation();
-        setShowMode(!ShowMode);
+  const [Data, setData] = useState(null)
+  const {TagContext_Obj} = useContext(TagContext);
+  const {AllTagData, ShowMode, setShowMode} = TagContext_Obj;
+  //改成顯示精簡模式
+  const fnc = (event) => {
+    event.stopPropagation();
+    setShowMode(!ShowMode);
+  }
+  useEffect(() => {
+    if(AllTagData && tagID){ //tagID是陣列
+      let data = AllTagData.filter(item => tagID.includes(item.tagID))
+      setData(data);
     }
-    useEffect(() => {
-        if(AllTagData && tagID){ //tagID是陣列
-            //let data = AllTagData.find(e => e.tagID === tagID);
-            let data = AllTagData.filter(item => tagID.includes(item.tagID))
-            setData(data);
-        }
-    },[AllTagData, tagID])
-    return (
-        <Wrapper tagID={tagID}>
-            {tagID && Data ? (
-                Data.map((item, index) => {
-                    return <Div key={index} onClick={fnc} bgColor={item.bgColor}>{ShowMode ? item.tagName : ''}</Div>
-                })
-            ) : (
-                <div />
-            )}
-        </Wrapper>
-    )
+  },[AllTagData, tagID])
+  return (
+    <Wrapper tagID={tagID}>
+      {tagID && Data ? (
+        Data.map((item, index) => {
+          return <Div key={index} onClick={fnc} bgColor={item.bgColor}>{ShowMode ? item.tagName : ''}</Div>
+        })
+      ) : (
+        <div />
+      )}
+    </Wrapper>
+  )
 }

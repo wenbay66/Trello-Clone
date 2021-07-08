@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Panel from '../../Panel';
 import Box from './Box';
 //context
-import {ToDoListContext} from './Container';
+//import {ToDoListContext} from './Container';
 import { ModifyContext } from '../List/ModifyCard';
 //icon
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
@@ -31,7 +31,7 @@ const list = [
   {
     name: '標籤',
     icon: LocalOfferOutlinedIcon,
-    ComponentName: 'Persion'
+    ComponentName: 'SetTag'
   },
   {
     name: '待辦清單',

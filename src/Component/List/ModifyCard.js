@@ -45,8 +45,8 @@ export const ModifyContext = React.createContext();
 const ModifyCard = ({ close, parentRef, paraObj }) => {
   //paraObj內容
   //const { AllTagData, setAllTagData, AllCardData, setAllCardData, card, ListTitle } = paraObj;
-  const { card, ListTitle } = paraObj;
-  
+  const { card, List_Obj } = paraObj;
+  const { ListTitle } = List_Obj;
   return(
     <ModifyContext.Provider value={{paraObj}}>
       <Wrapper>

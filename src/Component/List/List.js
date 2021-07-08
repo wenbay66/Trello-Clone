@@ -21,20 +21,26 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 }));*/
 export default function List({ list, index }) {
   //const classes = useStyle();
-  const { AllTagData, setAllTagData } = useContext(TagContext);
+  const { TagContext_Obj } = useContext(TagContext);
+  const { AllTagData, setAllTagData } = TagContext_Obj;
   const { AllCardData, setAllCardData, UpdateCardContext } = useContext(CardContext);
+
   const CardData = list.cards ? list.cards.map((card, index) => {
+    const List_Obj = {
+      'ListTitle': list.title,
+      'ListID': list.id
+    }
+    const TagContext_Obj = {
+      'AllTagData': AllTagData,
+      'setAllTagData': setAllTagData
+    }
     return (
       <Card
         key={card.id} 
-        ListTitle={list.title}
-        ListID={list.id}
+        List_Obj={List_Obj}
         card={card} 
-        AllTagData={AllTagData}
-        setAllTagData={setAllTagData}
-        AllCardData={AllCardData}
-        setAllCardData={setAllCardData}
-        UpdateCardContext={UpdateCardContext}
+        TagContext_Obj={TagContext_Obj}
+        CardContext_Obj={{AllCardData, setAllCardData, UpdateCardContext}}
         index={index}
       />
     );
