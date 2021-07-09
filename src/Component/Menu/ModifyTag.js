@@ -154,20 +154,11 @@ const ModifyTag = ({close, parentRef, propsObj}) => {
         {boxData}
       </Container>
       <Footer>
-        <Button 
-          bgColor='#1A79BF'
-          hoverColor='#156AA7' 
-          onClick={Submit}
-        >
-        {propsObj.tagData ? '儲存' : '新建'}
+        <Button bgColor='#1A79BF' hoverColor='#156AA7' onClick={Submit}>
+          {propsObj.tagData ? '儲存' : '新建'}
         </Button>  
-        <Button   
-          bgColor="#b04632" 
-          hoverColor='#933B28'
-          onClick={Delete}
-          Hidden={tagData ? false : true}
-        >
-        刪除
+        <Button bgColor="#b04632" hoverColor='#933B28' Hidden={tagData ? false : true} onClick={Delete}>
+          刪除
         </Button>
       </Footer>
     </div>

@@ -4,9 +4,6 @@ import styled,{keyframes} from "styled-components";
 import Panel from '../../Panel';
 import Tag from './Tag';
 import ModifyTag from './ModifyTag';
-//context
-//import {TagContext} from '../../Container';
-
 const animat = keyframes`
   0% {
     right: -100%;
@@ -66,9 +63,8 @@ const SetTag = ({TagContext_Obj}) => {
   const [UIdata, setUIdata] = useState(null);
   const [oriUIdata, setoriUIdata] = useState(null);
   const [SearchText, setSearchText] = useState('');
-  //const {TagContext_Obj} = useContext(TagContext);
-  //const {AllTagData, setAllTagData} = TagContext_Obj;
   const {AllTagData, setAllTagData} = TagContext_Obj;
+  const [CurrentTagData, setCurrentTagData] = useState(AllTagData);
   const btnRef = useRef();
   //建立全新標籤
   const CreateTag = (event) => {
@@ -78,8 +74,10 @@ const SetTag = ({TagContext_Obj}) => {
     const Left = `${client.x}px`;                    //加上半個 icon 的寬度比較好看
     const width = `${client.width}px`;               //需扣掉半個 icon 寬度
     const propsObj = { //有參數統一塞進這裡
-      AllTagData: AllTagData,
-      setAllTagData: setAllTagData
+      'AllTagData': AllTagData,
+      'setAllTagData': setAllTagData,
+      'CurrentTagData': CurrentTagData,
+      'setCurrentTagData': setCurrentTagData
     };
     Panel.open({Top, Left, width, propsObj, component: ModifyTag, Title: '新增標籤'})
   }
@@ -90,30 +88,32 @@ const SetTag = ({TagContext_Obj}) => {
     const Left = `${client.x + 16}px`;               //加上半個 icon 的寬度比較好看
     const width = `${client.width - 16}px`;          //需扣掉半個 icon 寬度
     const propsObj = {
-      tagData: AllTagData[tagIndex],
-      AllTagData: AllTagData,
-      setAllTagData: setAllTagData
+      'tagData': AllTagData[tagIndex],
+      'AllTagData': AllTagData,
+      'setAllTagData': setAllTagData,
+      'CurrentTagData': CurrentTagData,
+      'setCurrentTagData': setCurrentTagData
     }
     Panel.open({Top, Left, width, propsObj, component: ModifyTag, Title: '修改標籤'})
   }
   //get tag data .
   useEffect(() => {
-    if (AllTagData === null) return;
-    const _UIdata = AllTagData.map((item,index) => {
+    if (CurrentTagData === null) return;
+    const _UIdata = CurrentTagData.map((item,index) => {
       return <Tag data={item} key={index} dataIndex={index} fnc={fnc} />
     })
     setUIdata(_UIdata);
     setoriUIdata(_UIdata);
-  },[TagContext_Obj])// eslint-disable-line react-hooks/exhaustive-deps
+  },[CurrentTagData])// eslint-disable-line react-hooks/exhaustive-deps
   //According SearchText change UI data.
   useEffect(() => {
     const search = () => {
-      if (AllTagData === null) return;
+      if (CurrentTagData === null) return;
       if(SearchText === ''){
         setUIdata(oriUIdata);
         return;
       };
-      const data = AllTagData.map((item,index) => {
+      const data = CurrentTagData.map((item,index) => {
         let tagName = item.tagName.toUpperCase();
         return tagName.indexOf(SearchText.toUpperCase()) !== -1 ? <Tag data={item} key={index} dataIndex={index} fnc={fnc} /> : null;
       })
