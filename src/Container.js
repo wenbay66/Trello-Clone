@@ -5,7 +5,7 @@ import Wrapper from "./Component/List/Wrapper";
 import TopBar from "./Component/TopBar/TopBar";
 import Menu from "./Component/Menu/Menu";
 //API
-//import db from '../src/API';
+import db from './API';
 export const OpenContext = React.createContext();
 export const TagContext = React.createContext();
 const WrapperContainer = styled.div`
@@ -61,7 +61,17 @@ const Container = () => {
         bgColor: '#61BD50'
       }
     ]
-    setAllTagData(TestTagData)
+    //setAllTagData(TestTagData)
+    async function getData(){
+      let TagDatas = await db.collection('Tag').get().then(dc => {
+        return dc.docs.map(doc => {
+          const tagObj = Object.assign({}, doc.data(), {'tagID': doc.id});
+          return tagObj;
+        })
+      })
+      setAllTagData(TagDatas);
+    }
+    getData();
   },[])
   const TagContext_Obj = {AllTagData, setAllTagData, ShowMode, setShowMode}
   return(

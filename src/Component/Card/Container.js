@@ -25,6 +25,7 @@ const Right = styled.div`
 export const ToDoListContext = React.createContext();
 const Container = ({Icon, card}) => {
   const [CheckList, setCheckList] = useState([]);
+  
   //待辦清單(firebase資料)
   useEffect(() => {
     //用card.id去firebase抓
@@ -36,6 +37,7 @@ const Container = ({Icon, card}) => {
     }
     getDate();
   }, []);// eslint-disable-line react-hooks/exhaustive-deps
+  
   //待辦清單資料(測試環境)
   useEffect(() => {
     //data format

@@ -31,7 +31,7 @@ const list = [
   {
     name: '標籤',
     icon: LocalOfferOutlinedIcon,
-    ComponentName: 'SetTag'
+    ComponentName: 'Tag'
   },
   {
     name: '待辦清單',

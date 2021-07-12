@@ -60,7 +60,8 @@ const Button = styled.button`
   }
 `
 const ModifyTag = ({close, parentRef, propsObj}) => {
-  const {tagData, AllTagData, setAllTagData} = propsObj ? propsObj : null;
+  const {tagData, AllTagData, setAllTagData, Submit } = propsObj ? propsObj : null;
+  console.log(propsObj)
   //AllTagData、setAllTagData => Tag.js傳進來的參數(Context資料)。
   //tagData提供三個 value => tagName, bgColor, tagID
   const [Title, setTitle] = useState(tagData ? tagData.tagName : '');        //標籤名稱
@@ -77,7 +78,7 @@ const ModifyTag = ({close, parentRef, propsObj}) => {
       />
     )
   });
-  const Submit = () => {
+  const Submitx = () => {
     //先卡控有沒有輸入標籤資料
     if(Title === '' || TagColor === null) return;
     let _AllTagData = AllTagData ? [...AllTagData] : [];
@@ -154,7 +155,7 @@ const ModifyTag = ({close, parentRef, propsObj}) => {
         {boxData}
       </Container>
       <Footer>
-        <Button bgColor='#1A79BF' hoverColor='#156AA7' onClick={Submit}>
+        <Button bgColor='#1A79BF' hoverColor='#156AA7' onClick={() => Submit(tagData, {Title, TagColor})} >
           {propsObj.tagData ? '儲存' : '新建'}
         </Button>  
         <Button bgColor="#b04632" hoverColor='#933B28' Hidden={tagData ? false : true} onClick={Delete}>

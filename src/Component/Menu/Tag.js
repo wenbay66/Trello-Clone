@@ -2,6 +2,7 @@ import React,{ useRef } from 'react';
 import styled from "styled-components";
 //icon
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
+import CheckIcon from '@material-ui/icons/Check';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -17,6 +18,9 @@ const Container = styled.div`
     border-radius: 3px;
     cursor: pointer;
     flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-left: 0px solid rgba(0, 0, 0, .2);
     transition: padding-left,border-left .3s;
     &:hover{
@@ -39,17 +43,21 @@ const Icon = styled.div`
     }
 `
 //負責顯示用，click時回傳 client位置
-const Tag = ({data, dataIndex, fnc}) => {
-    const Ref = useRef();
-    return(
-        <Wrapper ref={Ref} onClick={() => fnc(Ref.current.getBoundingClientRect(), dataIndex)}>
-            <Container bgColor={data.bgColor}>
-                {data.tagName}
-            </Container>
-            <Icon>
-                <CreateOutlinedIcon style={{fontSize: '18px'}} />
-            </Icon>
-        </Wrapper>
-    )
+const Tag = ({data, IconClick, handleClick, checked}) => {
+  const Ref = useRef();
+  return(
+    <Wrapper ref={Ref}>
+      <Container 
+        bgColor={data.bgColor} 
+        onClick={() => handleClick(Ref.current.getBoundingClientRect(), data)}
+      >
+        {data.tagName}
+        <CheckIcon style={{display:`${checked ? 'block' : 'none'}`, fontSize: '14px'}} />
+      </Container>
+      <Icon onClick={() => IconClick(Ref.current.getBoundingClientRect(), data)}>
+        <CreateOutlinedIcon style={{fontSize: '18px'}} />
+      </Icon>
+    </Wrapper>
+  )
 }
 export default Tag;
