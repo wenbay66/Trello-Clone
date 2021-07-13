@@ -6,19 +6,8 @@ import InputContainer from "./InputContainer";
 //context
 import {TagContext} from '../../Container';
 import {CardContext} from './Wrapper';
-//api
-//import { makeStyles } from "@material-ui/core/styles";
-//import { Paper } from "@material-ui/core";
 import { Droppable, Draggable } from "react-beautiful-dnd";
-/*const useStyle = makeStyles((theme) => ({
-  root: {
-    width: "300px",
-    backgroundColor: "#EBECF0",
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
-  }
-}));*/
+
 export default function List({ list, index }) {
   //const classes = useStyle();
   const { TagContext_Obj } = useContext(TagContext);

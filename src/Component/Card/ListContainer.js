@@ -1,4 +1,4 @@
-import React,{useState, useEffect, useContext} from 'react';
+import React,{useContext} from 'react';
 import styled from "styled-components";
 //component
 import List from './ChildComponent/List';
@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Noto Sans, Ubuntu, Droid Sans, Helvetica Neue, sans-serif;
 `
-const ListContainer = ({card, Icon}) => {
+const ListContainer = ({card, List_Obj, Icon}) => {
   //const [UIdata, setUIdata] = useState(null);
   const {ToDoListContext_Obj} = useContext(ToDoListContext);
   const {CheckList, setCheckList} = ToDoListContext_Obj;
@@ -24,6 +24,7 @@ const ListContainer = ({card, Icon}) => {
               index={index} 
               list={list}
               card={card} 
+              List_Obj={List_Obj}
               Icon={Icon} 
               CheckList={CheckList} 
               setCheckList={setCheckList} 

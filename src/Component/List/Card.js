@@ -1,14 +1,15 @@
-import React from "react";
+import React, {useState, useContext} from "react";
 //component
 import Tag from './Tag';
 import CardPanel from '../../CardPanel';
+import CardPanel1 from '../../CardPanel1';
 import ModifyCard from "./ModifyCard";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 //icon
 import CreateIcon from '@material-ui/icons/Create';
 //context
-//import {CardContext} from './Wrapper';
+import {CardContext} from './Wrapper';
 
 const Icon = styled.span`
   position: absolute;
@@ -39,7 +40,9 @@ const Wrapper = styled.div`
 `
 export default function Card(props) {
   const {card, index, List_Obj, TagContext_Obj, CardContext_Obj} = props;
-  const OpenCard = () => {
+  //const [show, setshow] = useState(false);
+  const {OpenCard} = useContext(CardContext);
+  const OpenCard1 = () => {
     const paraObj = {
       'List_Obj': List_Obj,
       'TagContext_Obj': TagContext_Obj,    //source: src/Container.js
@@ -55,11 +58,12 @@ export default function Card(props) {
     event.stopPropagation();
     alert(card.context);
   }
-  return (
+  
+  const cardLayer = (
     <Draggable draggableId={card.id} index={index}>
       {(provided) => (
         <div ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}>
-          <Wrapper onClick={OpenCard}>
+          <Wrapper onClick={() => OpenCard(card, List_Obj)}>
             <Icon onClick={EditCard}>
               <CreateIcon style={{fontSize:'12px',color:'#5e6c84'}} />
             </Icon>
@@ -69,5 +73,10 @@ export default function Card(props) {
         </div>  
       )}
     </Draggable>
+  );
+  return (
+    <div>
+      {cardLayer}
+    </div>
   );
 };

@@ -2,7 +2,8 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from "styled-components";
 //context
 import { ToDoListContext } from '../Container';
-import { ModifyContext } from '../../List/ModifyCard';
+//import { ModifyContext } from '../../List/ModifyCard';
+import {CardContext} from '../../List/Wrapper';
 //api
 import { v4 as uuid } from "uuid";
 import db from '../../../API';
@@ -119,17 +120,17 @@ const PanelComponent = ({propsObj, parentRef, close}) => {
     </div>
   )
 }
-const ListItem = ({ToDo, Listid, card, Icon ,isDragging}) => {
+const ListItem = ({ToDo, Listid, card, List_Obj, Icon ,isDragging}) => {
 	const inputRef = useRef();
 	const Ref = useRef();
-	const [Checked, setChecked] = useState(false);                 //是否要顯示已完成
+	const [Checked, setChecked] = useState(false);                     //是否要顯示已完成
 	const [Edit, setEdit] = useState(false);
 	const [oriTitle, setoriTitle] = useState(ToDo.context);
   	const [newTitle, setnewTitle] = useState(ToDo.context);
-	const {ToDoListContext_Obj} = useContext(ToDoListContext); //卡片的代辦清單
+	const {ToDoListContext_Obj} = useContext(ToDoListContext);        //卡片的代辦清單
 	const {CheckList, setCheckList} = ToDoListContext_Obj;
-	const {paraObj} = useContext(ModifyContext);                   //卡片列表資料
-	const { AllCardData, setAllCardData, ListID } = paraObj;       //卡片列表資料
+	const { AllCardData, setAllCardData } = useContext(CardContext);  //卡片列表資料
+	const {ListID} = List_Obj;
 	useEffect(() => {
 		ToDo.done ? setChecked(true) : setChecked(false);
 	},[ToDo]);
@@ -140,11 +141,10 @@ const ListItem = ({ToDo, Listid, card, Icon ,isDragging}) => {
 		}
 	},[Edit])// eslint-disable-line react-hooks/exhaustive-deps
 	const CheckedChange = event => {
-		//const doneStatus = !Checked;
-		//setChecked(doneStatus);
 		//更新context資料
 		updateChecked(!Checked);
 		//更新firebase
+
 	}
 	const updateChecked = (doneStatus) => {
 		//一張卡片可能有多個list，找到現在卡片所屬的list
@@ -200,8 +200,8 @@ const ListItem = ({ToDo, Listid, card, Icon ,isDragging}) => {
 		setnewTitle(oriTitle);
 	}
 	const IconClick = (ref, event) => {
-		const client = ref.current.getBoundingClientRect();
-		const Top = `${client.y + client.height + 6}px`; //加上padding才會對齊
+	const client = ref.current.getBoundingClientRect();
+	const Top = `${client.y + client.height + 6}px`; //加上padding才會對齊
     const Left = `${client.x}px`;               
     const width = '330px';         
     let _component = PanelComponent;

@@ -1,11 +1,11 @@
-import React, {useContext} from 'react';
+import React, {useState} from 'react';
 import styled from "styled-components";
 //component
-import Panel from '../../Panel';
+import Panel1 from '../../Panel1';
 import Box from './Box';
-//context
-//import {ToDoListContext} from './Container';
-import { ModifyContext } from '../List/ModifyCard';
+import Persion from './SideBarChild/Persion';
+import Tag from './SideBarChild/Tag';
+import ToDoList from './SideBarChild/ToDoList';
 //icon
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
 import LocalOfferOutlinedIcon from '@material-ui/icons/LocalOfferOutlined';
@@ -54,40 +54,49 @@ const list = [
     ComponentName: 'Persion'
   }
 ];
-const SideBar = ({CheckList, setCheckList}) => {
-  const {paraObj} = useContext(ModifyContext);
-
+const Components = {
+  'Persion': Persion,
+  'Tag': Tag,
+  'ToDoList': ToDoList
+}
+const SideBar = ({card}) => {
+  const [Position, setPosition] = useState(null);
+  const [ComponentName, setComponentName] = useState(null);
   //開啟彈出層
   const fnc = (client, name, ComponentName) => {
     //top、left、width、tagName
     const Top = `${client.y + client.height + 5}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
     const Left = `${client.x}px`;   
     const width = '300px';         
-    let _component = require(`./SideBarChild/${ComponentName}`).default;
-    
-    const propsObj = { Span, CheckList, setCheckList, ModifyContextObj:paraObj };
-    /*const propsObj = {
-      tagData: AllTagData[tagIndex],
-      AllTagData: AllTagData,
-      setAllTagData: setAllTagData
-    }*/
-    Panel.open({Top, Left, width, propsObj, component: _component, Title: name})
+    setPosition({
+      'Top': Top,
+      'Left': Left,
+      'width': width
+    })
+    setComponentName(ComponentName)
+  }
+  const close = () => {
+    setPosition(null);
   }
   const UIdata = list.map((item, index) => {
     const Icon = item.icon;
     const props = {fnc:fnc, ComponentName:item.ComponentName, name:item.name}
-    //console.log(item.name)
     return (
       <Box key={index} {...props} >
         <Icon style={{marginRight: '8px'}} fontSize='small' />
       </Box>
     )
-  })
-  
+  });
+  const ChildComponent = Components[ComponentName];
   return(
     <Wrapper>
       <Span>新增至卡片</Span>
-      {UIdata}
+        {UIdata}
+      {Position ? (
+        <Panel1 Top={Position.Top} Left={Position.Left} width={Position.width} Title='test' close={close}>
+          <ChildComponent card={card} close={close} />
+        </Panel1>
+      ) : (null)}
     </Wrapper>
   )
 }

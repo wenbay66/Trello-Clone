@@ -63,8 +63,6 @@ export default function Menu({isOpen, handleClose}){
     ) : null;
     setComponent(<Component {...props} />);
   }
-  console.log('<-- menu -->')
-  console.log(TagContext_Obj)
   return(
     <GoNextContext.Provider value={GoNext}>
       <div style={MODAL_STYLE}>

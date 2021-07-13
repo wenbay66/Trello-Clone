@@ -44,13 +44,13 @@ const Item = styled.div`
   ${props => props.draggableStyle ? {...props.draggableStyle} : null};
 `
 //重新計算清單順序
-const reorder = (list, startIndex, endIndex) => {
+/*const reorder = (list, startIndex, endIndex) => {
 	const result = Array.from(list);
 	const [removed] = result.splice(startIndex, 1);
 	result.splice(endIndex, 0, removed);
 	return result;
-};
-const List = ({list, card, CheckList, setCheckList, index, Icon}) => {
+};*/
+const List = ({list, card, List_Obj, CheckList, setCheckList, index, Icon}) => {
   const queryAttr = "data-rbd-drag-handle-draggable-id";
   const inputRef = useRef();
   const { id, title, ToDoList } = list;
@@ -126,7 +126,7 @@ const List = ({list, card, CheckList, setCheckList, index, Icon}) => {
     <Draggable key={item.id} draggableId={item.id} index={index}>
       {(provided, snapshot) => (
         <Item ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} draggableStyle={provided.draggableProps.style}>
-          <ListItem Listid={id} ToDo={item} card={card} Icon={Icon} isDragging={snapshot.isDragging} />
+          <ListItem List_Obj={List_Obj} Listid={id} ToDo={item} card={card} Icon={Icon} isDragging={snapshot.isDragging} />
         </Item>
       )}
     </Draggable>

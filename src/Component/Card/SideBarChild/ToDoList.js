@@ -1,12 +1,18 @@
 import React, {useState, useEffect, useContext} from 'react';
 import styled from "styled-components";
 //context
+import {ToDoListContext} from '../Container';
 //import { ModifyContext } from '../../List/ModifyCard';
 //api
 import { v4 as uuid } from "uuid";
 import db from '../../../API';
 const Wrapper = styled.div`
   
+`
+const Span = styled.span`
+  color: #5E6C84;
+  font-size: 12px;
+  font-weight: 500;
 `
 const Input = styled.input`
   width: 100%;
@@ -57,15 +63,17 @@ const Button = styled.button`
     background-color: ${props => props.hoverColor ? props.hoverColor : '#156AA7'};
   }
 `;
-const ToDoList = ({propsObj, close}) => {
-  const {Span, CheckList, setCheckList, ModifyContextObj} = propsObj;
+const ToDoList = ({card, close}) => {
+  //const { CheckList, setCheckList, ModifyContextObj} = propsObj;
+  const {ToDoListContext_Obj} = useContext(ToDoListContext);
+  const {CheckList, setCheckList} = ToDoListContext_Obj;
   const [Title, setTitle] = useState('');
-  const {card} = ModifyContextObj;
   const handleChange = event => {
     setTitle(event.target.value);
   }
   const handleClick = () => {
     if(Title === '') return;
+    console.log(CheckList)
     let newList = {id: uuid(), title: Title, ToDoList: []};
     let newState;
     //卡片沒有待辦清單

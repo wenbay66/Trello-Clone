@@ -1,7 +1,7 @@
 import React,{ useState, useEffect, useRef } from 'react';
 import styled from "styled-components";
 //api
-import db, { update } from '../../API';
+import db from '../../API';
 //icon
 import SubjectIcon from '@material-ui/icons/Subject';
 import CloseIcon from '@material-ui/icons/Close';

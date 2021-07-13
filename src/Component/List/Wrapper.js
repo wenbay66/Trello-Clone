@@ -1,26 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { v4 as uuid } from "uuid";
-import { makeStyles } from "@material-ui/core/styles";
 import { Droppable, DragDropContext } from "react-beautiful-dnd";
+import styled from "styled-components";
 //css
 import "../../Css/reset.css";
 import "../../Css/styles.css";
 //component
 import List from "./List";
 import InputContainer from "./InputContainer";
+import CardPanel1 from '../../CardPanel1';
 //api
 import db, {update} from '../../../src/API';
 
-const useStyle = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-  }
-}));
+const Container = styled.div`
+  display: flex;
+`
+const Container1 = styled.div`
+  height: calc(100% - 48px);
+  overflow-x: auto;
+`
 export const CardContext = React.createContext();
+
 //React.memo => props有改變就-render
 const Wrapper = React.memo(function Wrapper() {
-  const className = useStyle();
-  const [AllCardData, setAllCardData] = useState(null);  //卡片資料
+  const [AllCardData, setAllCardData] = useState(null);  //所有卡片資料
+  const [Show, setShow] = useState(false);
+  const [CardPanelData, setCardPanelData] = useState(null);
   //卡片資料(init render)串接firebase api
   useEffect(() => {
     async function getData(){
@@ -289,24 +294,43 @@ const Wrapper = React.memo(function Wrapper() {
       //console.log("move to other list");
     }
   };
+  const OpenCard = (card, List_Obj) => {
+    setShow(true);
+    setCardPanelData({card, List_Obj});
+  }
   const ListData = AllCardData ? AllCardData.listIds.map((listId, index) => {
     const list = AllCardData.lists[listId];
     return <List list={list} key={listId} index={index} />;
   }) : ('');
-  console.log('weapper render')
+  const CardContext_Obj = {
+    'AllCardData': AllCardData,
+    'setAllCardData': setAllCardData,
+    'AddNewCard': AddNewCard,
+    'AddNewList': AddNewList,
+    'UpDateTitle': UpDateTitle,
+    'UpdateCardContext': UpdateCardContext,
+    'OpenCard': OpenCard,    //開啟卡片
+    'setShow': setShow,      //控制是否顯示CardPanel.js
+  };
+  const ListLayer = (
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="app" type="List" direction="horizontal">
+        {(provided) => (
+          <Container ref={provided.innerRef} {...provided.droppableProps}>
+            {ListData}
+            <InputContainer type="List" />
+            {provided.placeholder}
+          </Container>
+        )}
+      </Droppable>
+    </DragDropContext>
+  );
   return (
-    <CardContext.Provider value={{ AllCardData, setAllCardData, AddNewCard, AddNewList, UpDateTitle, UpdateCardContext }}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="app" type="List" direction="horizontal">
-          {(provided) => (
-            <div className={className.root} ref={provided.innerRef} {...provided.droppableProps}>
-              {ListData}
-              <InputContainer type="List" />
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+    <CardContext.Provider value={{...CardContext_Obj}}>
+      <Container1>
+        {ListLayer}
+        {Show ? <CardPanel1 setShow={setShow} CardPanelData={CardPanelData} setCardPanelData={setCardPanelData} /> : null}
+      </Container1>
     </CardContext.Provider>
   );
 })

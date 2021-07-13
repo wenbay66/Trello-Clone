@@ -1,7 +1,8 @@
 import React,{useRef, useState, useEffect, useContext} from 'react';
 import styled from "styled-components";
 //context
-import {ModifyContext} from '../List/ModifyCard';
+//import {ModifyContext} from '../List/ModifyCard';
+import {CardContext} from '../List/Wrapper';
 //icon
 import SubtitlesOutlinedIcon from '@material-ui/icons/SubtitlesOutlined';
 import CloseIcon from '@material-ui/icons/Close';
@@ -39,14 +40,11 @@ const InputText = styled.div`
   line-height: 32px;
   
 `
-const Header = ({Icon, close}) => {
-  //paraObj內容
+const Header = ({card, List_Obj, Icon, close}) => {
   const inputRef = useRef();
-  const { paraObj } = useContext(ModifyContext);
-  //const { card, ListID, UpdateCardContext } = paraObj;
-  const {card, List_Obj, CardContext_Obj} = paraObj;
-  const {ListID} = List_Obj;
-  const {UpdateCardContext} = CardContext_Obj;
+  const { ListID } = List_Obj;
+  const { UpdateCardContext } = useContext(CardContext);
+
   const [oriTitle, setoriTitle] = useState(card.context);// eslint-disable-line no-unused-vars
   const [Title, setTitle] = useState(card.context);
   const [isEditTitle, setisEditTitle] = useState(false);

@@ -41,21 +41,19 @@ const Span = styled.span`
   margin-left: ${props => props.marginLeft ? props.marginLeft : null}
 `
 export const ModifyContext = React.createContext();
-const ModifyCard = ({ close, parentRef, paraObj }) => {
+const ModifyCard = ({ close, card, List_Obj}) => {
   //const { List_Obj, CardContext_Obj, TagContext_Obj, card(當前卡片) } = paraObj; ===> paraObj內容
-  const { card, List_Obj } = paraObj;
-  const { ListTitle } = List_Obj;
+  //const { card, List_Obj } = paraObj;
+  //const { ListTitle } = List_Obj;
   return(
-    <ModifyContext.Provider value={{paraObj}}>
-      <Wrapper>
-        <Header Icon={Icon} close={close} />
-        <Span marginLeft='40px'>
-          <span style={{marginRight: '5px'}}>在「{ListTitle}」列表中</span>
-          <VisibilityOutlinedIcon />
-        </Span>
-        <Container Icon={Icon} card={card} />
-      </Wrapper>
-    </ModifyContext.Provider>
+    <Wrapper>
+      <Header card={card} List_Obj={List_Obj} Icon={Icon} close={close} />
+      <Span marginLeft='40px'>
+        <span style={{marginRight: '5px'}}>在「{List_Obj.ListTitle}」列表中</span>
+        <VisibilityOutlinedIcon />
+      </Span>
+      <Container Icon={Icon} card={card} List_Obj={List_Obj} />
+    </Wrapper>
   )
 }
 export default ModifyCard;

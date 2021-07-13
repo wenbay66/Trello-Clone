@@ -1,7 +1,8 @@
 import React,{ useContext } from 'react';
 import styled from "styled-components";
 //context
-import {ModifyContext} from '../List/ModifyCard'
+//import {ModifyContext} from '../List/ModifyCard'
+import {TagContext} from '../../Container';
 //icon
 import AddIcon from '@material-ui/icons/Add';
 const Wrapper = styled.div`
@@ -33,15 +34,9 @@ const Button = styled.span`
     opacity: 0.8
   }
 `
-const TagContainer = ({Icon}) => {
-  //paraObj內容
-  //const { AllTagData, setAllTagData, AllCardData, setAllCardData, card } = paraObj;
-  const { paraObj } = useContext(ModifyContext);
-  const {TagContext_Obj, card} = paraObj;
-  console.log('TagContext_Obj')
-  console.log(TagContext_Obj)
+const TagContainer = ({card, Icon}) => {
+  const {TagContext_Obj} = useContext(TagContext);
   const {AllTagData} = TagContext_Obj;
-  //const {AllTagData, card} = paraObj;
   //標籤陣列
   const BtnArray = AllTagData.map((item, index) => {
     let array = card.tagID;

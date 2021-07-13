@@ -9,7 +9,8 @@ const useStyle = makeStyles((theme) => ({
   },
   root_list: {
     padding: theme.spacing(1, 1, 0, 1),
-    width: "270px"
+    width: "270px",
+    minWidth: '270px'
   },
   Add_card: {
     display: "flex",

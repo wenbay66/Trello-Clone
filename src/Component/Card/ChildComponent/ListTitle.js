@@ -86,7 +86,8 @@ const ListTitle = ({Icon, card, title, Listid, ToDoList, Hidden, setHidden}) => 
   const [oriTitle, setoriTitle] = useState(title);
   const [newTitle, setnewTitle] = useState(title);
   const Ref = useRef();
-  const {CheckList, setCheckList} = useContext(ToDoListContext);//卡片的代辦清單
+  const {ToDoListContext_Obj} = useContext(ToDoListContext);  //卡片的代辦清單
+  const {CheckList, setCheckList} = ToDoListContext_Obj;
   useEffect(() => {
     const num = ToDoList.reduce((total, curr) => {
       if(curr.done === true) total = total + 1;

@@ -18,6 +18,7 @@ const LeftContainer = styled.div`
   transition: width .1s ease-in
 `
 const RightContainer = styled.div`
+  z-index: 10;
   width: ${props => props.isOpen ? '20%' : '0%'};
   position: relative;
   transition: width .1s ease-in;
