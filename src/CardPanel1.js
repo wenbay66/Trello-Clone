@@ -2,8 +2,7 @@ import React, {useRef} from 'react';
 import styled from "styled-components";
 //component
 import ModifyCard from './Component/List/ModifyCard';
-//context
-//import {CardContext} from './Component/List/Wrapper'
+
 const Wrapper = styled.div`
   z-index: 90;
   height: 100%;
@@ -16,12 +15,10 @@ const Wrapper = styled.div`
 `
 const CardPanel1 = ({setShow, CardPanelData, setCardPanelData}) => {
   const { card, List_Obj } = CardPanelData;
-  //const {} = useContext(CardContext);
   const Ref = useRef();
   const close = () => {
     setShow(false);
   }
-  console.log(List_Obj)
   return(
     <Wrapper ref={Ref}>
       <ModifyCard card={card} List_Obj={List_Obj} close={close} />

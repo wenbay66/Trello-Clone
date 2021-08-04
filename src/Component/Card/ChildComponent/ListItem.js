@@ -3,7 +3,7 @@ import styled from "styled-components";
 //context
 import { ToDoListContext } from '../Container';
 //import { ModifyContext } from '../../List/ModifyCard';
-import {CardContext} from '../../List/Wrapper';
+import {AllCardContext} from '../../../Container';
 //api
 import { v4 as uuid } from "uuid";
 import db from '../../../API';
@@ -116,20 +116,20 @@ const PanelComponent = ({propsObj, parentRef, close}) => {
   return(
     <div>
       <Button {...btnProps} onClick={() => handleClick(transToCard)}>轉換為卡片</Button>
-		<Button onClick={() => handleClick(deleteToDo)} bgColor='#b04632' hoverColor='#933b27' {...btnProps}>刪除</Button>
+			<Button onClick={() => handleClick(deleteToDo)} bgColor='#b04632' hoverColor='#933b27' {...btnProps}>刪除</Button>
     </div>
   )
 }
-const ListItem = ({ToDo, Listid, card, List_Obj, Icon ,isDragging}) => {
+const ListItem = ({ToDo, Listid, card, List_Obj, Icon, setPosition, setpropsObj, isDragging}) => {
 	const inputRef = useRef();
 	const Ref = useRef();
 	const [Checked, setChecked] = useState(false);                     //是否要顯示已完成
 	const [Edit, setEdit] = useState(false);
 	const [oriTitle, setoriTitle] = useState(ToDo.context);
-  	const [newTitle, setnewTitle] = useState(ToDo.context);
+  const [newTitle, setnewTitle] = useState(ToDo.context);
 	const {ToDoListContext_Obj} = useContext(ToDoListContext);        //卡片的代辦清單
 	const {CheckList, setCheckList} = ToDoListContext_Obj;
-	const { AllCardData, setAllCardData } = useContext(CardContext);  //卡片列表資料
+	const { AllCardData, setAllCardData } = useContext(AllCardContext);  //卡片列表資料
 	const {ListID} = List_Obj;
 	useEffect(() => {
 		ToDo.done ? setChecked(true) : setChecked(false);
@@ -174,24 +174,24 @@ const ListItem = ({ToDo, Listid, card, List_Obj, Icon ,isDragging}) => {
 	const handleSave = () => {
 		//一張卡片可能有多個list，找到現在卡片所屬的list
 		let _List = JSON.parse(JSON.stringify(CheckList.find(List => List.id === Listid)));
-    const ListIndex = CheckList.findIndex(List => List.id === Listid);
+		const ListIndex = CheckList.findIndex(List => List.id === Listid);
 		_List.ToDoList.every(todo => {
-      if(todo.id === ToDo.id){
-        todo.context = newTitle;
-        return false;
-      }
-      return true;
-    });
+			if(todo.id === ToDo.id){
+				todo.context = newTitle;
+				return false;
+			}
+			return true;
+		});
 		let newState = [...CheckList];
-    newState[ListIndex] = _List;
-    //更新 UIdata
-    setCheckList(newState);
-    //更新 firebase
-    let docRef = db.collection('Card_ToDoList').doc(card.id);
-    docRef.set({
-      ListArray: newState
-    });
-    // 關閉輸入模式
+		newState[ListIndex] = _List;
+		//更新 UIdata
+		setCheckList(newState);
+		//更新 firebase
+		let docRef = db.collection('Card_ToDoList').doc(card.id);
+			docRef.set({
+			ListArray: newState
+		});
+    	// 關閉輸入模式
 		setoriTitle(newTitle);
 		setEdit(false);
 	}
@@ -200,10 +200,13 @@ const ListItem = ({ToDo, Listid, card, List_Obj, Icon ,isDragging}) => {
 		setnewTitle(oriTitle);
 	}
 	const IconClick = (ref, event) => {
-	const client = ref.current.getBoundingClientRect();
-	const Top = `${client.y + client.height + 6}px`; //加上padding才會對齊
+		const client = ref.current.getBoundingClientRect();
+		const Top = `${client.y + client.height + 6}px`; //加上padding才會對齊
     const Left = `${client.x}px`;               
     const width = '330px';         
+		setPosition({Top, Left, width});
+		setpropsObj({Listid, ToDo, card, List_Obj});
+		return;
     let _component = PanelComponent;
 		//刪除待辦細項
 		const deleteToDo = () => {
@@ -216,11 +219,11 @@ const ListItem = ({ToDo, Listid, card, List_Obj, Icon ,isDragging}) => {
 			//更新 context
 			setCheckList(newState);
 			//更新 firebase
-      let docRef = db.collection('Card_ToDoList').doc(card.id);
-      docRef.set({
-        ListArray: newState
-      });
-      console.log('delete success')
+			let docRef = db.collection('Card_ToDoList').doc(card.id);
+			docRef.set({
+				ListArray: newState
+			});
+			console.log('delete success')
 		}
 		//待辦細項轉成卡片
 		const transToCard = () => {

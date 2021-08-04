@@ -123,6 +123,9 @@ const Description = ({ Icon, card }) => {
     const currentRows = ~~(event.scrollHeight / textareaLineHeight);
     event.rows = currentRows;
   }
+  const handleKeyDown = event => {
+    if(event.keyCode === 13) handleClick()
+  }
   //init render call api 用card.id看有沒有資料
   useEffect(() => {
     async function getData(){
@@ -156,6 +159,7 @@ const Description = ({ Icon, card }) => {
       Edit={Edit}
       value={Value}
       onChange={handleChange}
+      onKeyDown={handleKeyDown}
       onClick={() => setEdit(true)}
       placeholder='新增更詳細的敘述...'
     />

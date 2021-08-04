@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { CardContext } from './Wrapper';
+import { AllCardContext } from '../../Container';
 import ClearIcon from "@material-ui/icons/Clear";
 import { Button, IconButton } from "@material-ui/core";
 const useStyle = makeStyles((theme) => ({
@@ -42,7 +42,7 @@ const useStyle = makeStyles((theme) => ({
 export default function InputCard(props) {
   const { Open, setOpen, listId, type } = props;
   const [CardTitle, setCardTitle] = useState("");
-  const { AddNewCard, AddNewList } = useContext(CardContext);
+  const { AddNewCard, AddNewList } = useContext(AllCardContext);
   const inputRef = useRef();
   //輸入文字
   const handleChange = (e) => {

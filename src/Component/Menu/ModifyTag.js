@@ -1,15 +1,19 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect, useContext, useImperativeHandle} from 'react';
 import { v4 as uuid } from "uuid";
 import styled from "styled-components";
 //component
 import TagBox from './TagBox';
-
+//context
+import {AllCardContext} from '../../Container';
+//api
+import db from '../../API';
 const H4 = styled.h4`
   font-size: 12px;
   font-weight: 700;
   color: #5E6C84;
   margin-bottom: 4px;
 `
+
 const SearchBox = styled.input`
   box-sizing:border-box;
   width: 100%;
@@ -43,6 +47,8 @@ const Footer = styled.div`
 `
 const Button = styled.button`
   background-color: ${props => props.bgColor ? props.bgColor : null};
+  margin: ${props => props.margin ? props.margin : null};
+  width: ${props => props.width ? props.width : null};
   color: #FFF;
   font-size: 14px;
   font-weight: 400;
@@ -59,13 +65,13 @@ const Button = styled.button`
     background-color: ${props => props.hoverColor ? props.hoverColor : null};
   }
 `
-const ModifyTag = ({close, parentRef, propsObj}) => {
+const ModifyTag = ({ GoNext, close, propsObj}, ref) => {
   const {tagData, AllTagData, setAllTagData, Submit } = propsObj ? propsObj : null;
-  console.log(propsObj)
-  //AllTagData、setAllTagData => Tag.js傳進來的參數(Context資料)。
   //tagData提供三個 value => tagName, bgColor, tagID
   const [Title, setTitle] = useState(tagData ? tagData.tagName : '');        //標籤名稱
   const [TagColor, setTagColor] = useState(tagData ? tagData.bgColor : null) //標籤顏色
+  const [Confirm, setConfirm] = useState(false);
+  const {AllCardData, setAllCardData} = useContext(AllCardContext);
   //選定Tag要什麼顏色的
   const bgColor = ['#61BD50','#F2D600','#FB9F1A','#EB5A46','#C377E0','#1A79BF','#00C2E0','#51E898','#FF78CB','#344563'];
   const boxData = bgColor.map((item, index) => {
@@ -78,76 +84,70 @@ const ModifyTag = ({close, parentRef, propsObj}) => {
       />
     )
   });
-  const Submitx = () => {
-    //先卡控有沒有輸入標籤資料
-    if(Title === '' || TagColor === null) return;
-    let _AllTagData = AllTagData ? [...AllTagData] : [];
-    //新增標籤
-    if(!tagData){ //tagData為空代表要建立新標籤
-      const newData = { 'tagName': Title, 'bgColor':TagColor, 'tagID': uuid() };
-      _AllTagData.push(newData);
-      setAllTagData(_AllTagData);
-      //call api 更新數據庫
-      close();
-      return;
-    }
-    //修改標籤
-    if(tagData){
-      //取得外層Context傳入的標籤資料(用來檢查有沒有修改)
-      const oriTagData = AllTagData.find(item => item.tagID === tagData.tagID);
-      //沒有修改(不call api 更新資料)
-      if(oriTagData.tagName === Title && oriTagData.bgColor === TagColor){
-        close();
-        return;
-      }
-      //有修改標籤資訊(call api 更新資料)
-      if(oriTagData.tagName !== Title || oriTagData.bgColor !== TagColor){
-        //找出目前編輯的標籤是哪一個(用ID去找)
-        const index = AllTagData.findIndex(item => tagData.tagID === item.tagID);
-        _AllTagData[index].tagName = Title;
-        _AllTagData[index].bgColor = TagColor;
-        setAllTagData(_AllTagData);
-        //call api 更新遠端數據庫
-
-        close();
+  //是否關閉刪除的提示視窗
+  useImperativeHandle(ref, () => ({
+    CheckConfirm: () => {
+      if(Confirm === true){
+        setConfirm(false)
       }
     }
+  }))
+  //刪除卡片標籤資料
+  const DeleteCardTag = () => {
+    const _AllCardData = JSON.parse(JSON.stringify(AllCardData));
+    let tmplistIds = [];
+    const Callback = (cards, listId) => {
+      cards.every(card => {
+        if(card.tagID && card.tagID.includes(tagData.tagID)){
+          const tagIndex = card.tagID.findIndex(id => id === tagData.tagID);
+          card.tagID.splice(tagIndex, 1);
+          tmplistIds.push(listId);
+        }
+        return true;
+      })
+    };
+    //畫面資料刪除
+    _AllCardData.listIds.forEach(listId => Callback(_AllCardData.lists[listId].cards, listId));
+    setAllCardData(_AllCardData);
+    //call firebase api 刪除
+    const apiCallback = async listId => {
+      let docRef = await db.collection('Lists').doc(listId);
+      let _cards = [..._AllCardData.lists[listId].cards];
+      docRef.update({
+        cards: _cards
+      });
+    }
+    tmplistIds.forEach(listId => apiCallback(listId));
+    console.log('cardTag SUCCESS !!!')
   }
-  //刪除標籤
-  const Delete = () => {
+  //刪除標籤資料
+  const DeleteTag = async () => {
     let _AllTagData = [...AllTagData];
     //取得外層Context傳入的標籤資料
     const oriTagData = AllTagData.find(item => item.tagID === tagData.tagID);
     //找出要刪除的標籤index
     const index = AllTagData.findIndex(item => oriTagData.tagID === item.tagID);
     _AllTagData.splice(index, 1);
-    //修改卡片資料，刪除被刪除的 Tag 的 tagID
-
-    //call api 更新遠端數據庫
-
     //更新標籤資料Context
     setAllTagData(_AllTagData);
-
-    //更新卡片資料Context
-
+    //call api 更新遠端數據庫
+    let docRef = db.collection('Tag').doc(tagData.tagID);
+    docRef.delete()
+  }
+  //刪除標籤
+  const Delete = () => {
+    DeleteCardTag();  //刪除卡片標籤
+    DeleteTag();      //刪除標籤
     //關閉對話框
     close();
   }
-  //點擊其他地方可以關閉 Panel
-  useEffect(() => {
-    const onBodyClick = event => {
-      //react v17 必須增加判斷 ref.current
-      if(parentRef.current && !parentRef.current.contains(event.target)){
-          close();
-      }
-    }
-    document.body.addEventListener('click', onBodyClick);
-    return () => {
-      document.body.removeEventListener('click',onBodyClick);
-    }
-  },[])// eslint-disable-line react-hooks/exhaustive-deps
-  return(
-    <div >
+  const openConfirm = event => {
+    GoNext('刪除標籤?');
+    setConfirm(true);
+    event.stopPropagation();
+  }
+  const Layer = (
+    <>
       <H4>名字</H4> 
       <SearchBox onChange={(e) => setTitle(e.target.value)} value={Title} />
       <H4>選一個顏色</H4> 
@@ -155,14 +155,41 @@ const ModifyTag = ({close, parentRef, propsObj}) => {
         {boxData}
       </Container>
       <Footer>
-        <Button bgColor='#1A79BF' hoverColor='#156AA7' onClick={() => Submit(tagData, {Title, TagColor})} >
+        <Button 
+          bgColor='#1A79BF' 
+          hoverColor='#156AA7' 
+          onClick={tagData ? (
+            (e) => Submit(e, tagData, {Title, TagColor})
+          ) : (
+            (e) => Submit(e, close, {Title, TagColor})
+          )} 
+        >
           {propsObj.tagData ? '儲存' : '新建'}
         </Button>  
-        <Button bgColor="#b04632" hoverColor='#933B28' Hidden={tagData ? false : true} onClick={Delete}>
+        <Button bgColor="#b04632" hoverColor='#933B28' Hidden={tagData ? false : true} onClick={openConfirm}>
           刪除
         </Button>
       </Footer>
+    </>
+  );
+  const ConfirmLayer = (
+    <>
+      <p>此動作無法復原。將移除所有卡片上的這個標籤，同時銷毀它的歷程</p>
+      <Button
+        margin='4px 0px 0px 0px'
+        bgColor="#b04632" 
+        hoverColor='#933B28'
+        width='100%'
+        onClick={Delete}
+      >
+        刪除
+      </Button>
+    </>
+  );
+  return(
+    <div style={{padding: '8px'}}>
+      {Confirm ? ConfirmLayer : Layer}
     </div>
   )
 }
-export default ModifyTag;
+export default React.forwardRef(ModifyTag);

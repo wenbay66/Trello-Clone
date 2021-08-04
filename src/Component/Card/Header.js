@@ -2,7 +2,7 @@ import React,{useRef, useState, useEffect, useContext} from 'react';
 import styled from "styled-components";
 //context
 //import {ModifyContext} from '../List/ModifyCard';
-import {CardContext} from '../List/Wrapper';
+import {AllCardContext} from '../../Container';
 //icon
 import SubtitlesOutlinedIcon from '@material-ui/icons/SubtitlesOutlined';
 import CloseIcon from '@material-ui/icons/Close';
@@ -30,8 +30,7 @@ const Input = styled.input`
   font-weight: 600;
   border: 2px solid #0079bf;
   border-radius: 3px;
-  
-  margin-left: -4px
+  margin-left: -4px;
 ` 
 const InputText = styled.div`
   width: 100%;
@@ -43,7 +42,7 @@ const InputText = styled.div`
 const Header = ({card, List_Obj, Icon, close}) => {
   const inputRef = useRef();
   const { ListID } = List_Obj;
-  const { UpdateCardContext } = useContext(CardContext);
+  const { UpdateCardContext } = useContext(AllCardContext);
 
   const [oriTitle, setoriTitle] = useState(card.context);// eslint-disable-line no-unused-vars
   const [Title, setTitle] = useState(card.context);
@@ -71,7 +70,7 @@ const Header = ({card, List_Obj, Icon, close}) => {
       </Icon>
       <InputContainer>
         {isEditTitle ? (
-          <Input ref={inputRef} value={Title} onBlur={handleBlur} onChange={handleChange} />
+          <Input spellCheck="false" ref={inputRef} value={Title} onBlur={handleBlur} onChange={handleChange} />
         ) : (
           <InputText onClick={handleClick}>{Title}</InputText>
         )}

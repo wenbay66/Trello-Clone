@@ -1,66 +1,86 @@
 import React,{ useContext } from "react";
+import styled from "styled-components";
 //component
 import Title from "./Title";
 import Card from "./Card";
 import InputContainer from "./InputContainer";
 //context
-import {TagContext} from '../../Container';
-import {CardContext} from './Wrapper';
+import {AllCardContext} from '../../Container';
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
-export default function List({ list, index }) {
-  //const classes = useStyle();
-  const { TagContext_Obj } = useContext(TagContext);
-  const { AllTagData, setAllTagData } = TagContext_Obj;
-  const { AllCardData, setAllCardData, UpdateCardContext } = useContext(CardContext);
-
-  const CardData = list.cards ? list.cards.map((card, index) => {
-    const List_Obj = {
-      'ListTitle': list.title,
-      'ListID': list.id
+const BgCard = styled.div`
+  position: absolute;
+  top: ${props => props.BgProps ? props.BgProps.clientY : 0}px;
+  left: ${props => props.BgProps ? props.BgProps.clientX : 0}px;
+  height: ${props => props.BgProps ? props.BgProps.clientHeight : null}px;
+  width: ${props => props.BgProps ? props.BgProps.clientWidth : null}px;
+  background:red;
+`
+export default function List({ list, BgProps, index }) {
+  const { searchTag, searchText } = useContext(AllCardContext);
+  //檢查卡片有沒有包含要搜尋的標籤
+  const getHasTag = card => {
+    if(searchTag.length > 0 && card.tagID){
+      //const tmplist = card.tagID.filter(id => searchTag.includes(id));
+      const tmplist = searchTag.filter(tag => card.tagID.includes(tag));
+      return tmplist.length === searchTag.length
     }
-    const TagContext_Obj = {
-      'AllTagData': AllTagData,
-      'setAllTagData': setAllTagData
+    if(searchTag.length > 0 && !card.tagID) return false
+    return true;
+  };
+  //檢查卡片有沒有包含要搜尋的文字
+  const getHasText = card => {
+    if(searchText !== ''){
+      return (card.context).includes(searchText)
     }
-    return (
-      <Card
-        key={card.id} 
-        List_Obj={List_Obj}
-        card={card} 
-        TagContext_Obj={TagContext_Obj}
-        CardContext_Obj={{AllCardData, setAllCardData, UpdateCardContext}}
-        index={index}
-      />
-    );
-  }) : null;
+    return true;
+  };
+  const CardData = list.cards ? list.cards
+  .filter(card => {
+    //沒有搜尋項目
+    if(searchTag.length === 0 && searchText === '') return true;
+    //有沒有包含要搜尋的標籤
+    let hasTag = getHasTag(card);
+    //有包含文字
+    let hasText = getHasText(card);
+    return hasTag && hasText
+  })
+   : null;
   const root = {
     width: "300px",
     backgroundColor: "#EBECF0",
     marginLeft: '8px',
     marginTop: '8px',
     paddingBottom: '8px',
-    borderRadius: '3px'
+    borderRadius: '3px',
+    
   }
   return (
     <Draggable draggableId={list.id} index={index}>
       {(provided) => (
-        <div ref={provided.innerRef} {...provided.draggableProps}>
-          <div style={root} >
-            <div {...provided.dragHandleProps}>
-              <Title listId={list.id} title={list.title} />
-              <Droppable droppableId={list.id}>
-                {(provided) => (
-                  <div style={{width: 'inherit'}} ref={provided.innerRef} {...provided.droppableProps}>
-                    <div style={{width: 'inherit'}}>
-                      {CardData}
-                      {provided.placeholder}
-                    </div>
-                  </div>
-                )}
-              </Droppable>
-              <InputContainer type="Card" listId={list.id} />
-            </div>
+        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+          <div style={root} {...provided.dragHandleProps}>
+            <Title listId={list.id} title={list.title} />
+            <Droppable droppableId={list.id} type='card'>
+              {(provided, snapshot) => (
+                <div style={{width: 'inherit', minHeight: '30px', position: 'relative'}} ref={provided.innerRef} {...provided.droppableProps}>
+                  {CardData ? CardData.map((card, index) => {
+                    return (
+                      <Card
+                        key={card.id} 
+                        List_Obj={{'ListTitle': list.title, 'ListID': list.id}}
+                        card={card} 
+                        index={index}
+                      />
+                    );
+                  }) : null}
+                  {/*<BgCard BgProps={BgProps} />*/}
+                  {/*provided.placeholder*/}
+                </div>
+              )}
+            </Droppable>
+            
+            <InputContainer type="Card" listId={list.id} />
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { CardContext } from './Wrapper';
+import { AllCardContext } from '../../Container';
 const useStyle = makeStyles((theme) => ({
   root: {
     color: "#172b4d",
@@ -38,7 +38,7 @@ export default function Title({ title, listId }) {
   const [Open, setOpen] = useState(false);
   const [NewTitle, setNewTitle] = useState(title);
   const inputRef = useRef();
-  const { UpDateTitle } = useContext(CardContext);
+  const { UpDateTitle } = useContext(AllCardContext);
   const handleChange = (e) => {
     setNewTitle(e.target.value);
   };
@@ -46,8 +46,11 @@ export default function Title({ title, listId }) {
     setOpen(false);
     UpDateTitle(NewTitle, listId);
   };
-  const handleKeyDown = (e) => {
-    return e.keyCode === 13 ? handleBlur() : "";
+  const handleKeyDown = event => {
+    if(event.keyCode === 13){
+      handleBlur();
+    }
+    //return e.keyCode === 13 ? handleBlur() : "";
   };
   const handleClick = () => {
     setOpen(true);

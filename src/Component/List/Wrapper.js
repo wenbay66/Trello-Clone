@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid";
+import React, { useState, useEffect, useContext } from "react";
 import { Droppable, DragDropContext } from "react-beautiful-dnd";
 import styled from "styled-components";
 //css
@@ -9,40 +8,27 @@ import "../../Css/styles.css";
 import List from "./List";
 import InputContainer from "./InputContainer";
 import CardPanel1 from '../../CardPanel1';
+//context
+import { AllCardContext } from "../../Container";
 //api
-import db, {update} from '../../../src/API';
+import db from '../../../src/API';
 
 const Container = styled.div`
   display: flex;
+  height: 30px;
 `
 const Container1 = styled.div`
+  bachground-color: red;
   height: calc(100% - 48px);
   overflow-x: auto;
+  min-height: 30px !important;
 `
 export const CardContext = React.createContext();
-
-//React.memo => props有改變就-render
-const Wrapper = React.memo(function Wrapper() {
-  const [AllCardData, setAllCardData] = useState(null);  //所有卡片資料
-  const [Show, setShow] = useState(false);
+const Wrapper = function Wrapper() {
+  const {AllCardData, setAllCardData} = useContext(AllCardContext);
   const [CardPanelData, setCardPanelData] = useState(null);
-  //卡片資料(init render)串接firebase api
-  useEffect(() => {
-    async function getData(){
-      await db.collection('Lists').get().then(Lists => {
-        //取得所有列表的id, 方便之後更新api
-        const listIds = Lists.docs.map(List => List.id);
-        //所有列表的資料
-        const lists = Lists.docs.reduce((Previous, Current) => {
-          Previous[Current.id] = Object.assign({}, Current.data(), {id: Current.id});
-          return Previous;
-        }, {});
-        const state = {listIds, lists};
-        setAllCardData(state)
-      })
-    }
-    getData();
-  },[])
+  const [Show, setShow] = useState(false);
+  const [BgProps, setBgProps] = useState({});
   
   //卡片資料測試環境(init render)
   useEffect(() => {
@@ -128,113 +114,18 @@ const Wrapper = React.memo(function Wrapper() {
       listIds: ["list-1", "list-2"]//firebase uuid
     };
     //setAllCardData(data)
-  },[])
-  //新增卡片
-  const AddNewCard = (title, listid) => {
-    const newCardId = uuid();
-    const newCard = {
-      id: newCardId,
-      context: title
-    };
-    const list = AllCardData.lists[listid];
-    //list.cards = [...list.cards, newCard];
-    list.cards = list.cards ? [...list.cards, newCard] : [newCard];
-    const newState = {
-      ...AllCardData,
-      lists: {
-        ...AllCardData.lists,
-        [listid]: list
-      }
-    };
-    //更新新增的卡片到 firebase
-    let docRef = db.collection('Lists').doc(listid);
-    docRef.update({
-      cards: update.FieldValue.arrayUnion(newCard)
-    });
-    //更新UI畫面
-    setAllCardData(newState);
-  };
-  //新增列表
-  const AddNewList = (title) => {
-    const newListId = uuid();
-    const newList = {
-      id: newListId,
-      title,
-      cards: []
-    };
-    const newState = {
-      listIds: [...AllCardData.listIds, newListId],
-      lists: {
-        ...AllCardData.lists,
-        [newListId]: newList
-      }
-    };
-    //更新新增的列表到 firebase
-    let docRef = db.collection('Lists').doc(newListId);
-    docRef.set({
-      title
-    });
-    //更新UI畫面
-    setAllCardData(newState);
-  };
-  //更新卡片名稱
-  const UpdateCardContext = (NewCardContext, ListID, card) => {
-    //更新 UI data
-    const cards = AllCardData.lists[ListID].cards; //卡片所屬的列表所有資料 => AllCardData.lists[ListID];
-    //step1 複製出列表下所有卡片資料
-    const _cards = JSON.parse(JSON.stringify(cards));
-    //step2 修改要更改的卡片
-    _cards.every(element => {
-      if(element.id === card.id){
-        element.context = NewCardContext;
-        return false;
-      }
-      return true;
-    });
-    //step3 產生新的所有列表資料
-    let _lists = {
-      ...AllCardData.lists,
-      [ListID]: {
-        ...AllCardData.lists[ListID],
-        cards: _cards
-      }
-    }
-    //新的UI data
-    let newData = {
-      listIds: [...AllCardData.listIds],
-      lists: _lists
-    }
-    //更新context資料
-    setAllCardData(newData)
-    //更新firebase資料
-    let docRef = db.collection('Lists').doc(ListID);
-    docRef.update({
-      cards: _cards
-    })
-  }
-  //更新列表名稱
-  const UpDateTitle = (NewTitle, listid) => {
-    const newList = AllCardData.lists[listid];
-    newList.title = NewTitle;
-    const newState = {
-      listIds: [...AllCardData.listIds],
-      lists: {
-        ...AllCardData.lists,
-        [listid]: newList
-      }
-    };
-    //更新新的列表名稱到firebase
-    let docRef = db.collection('Lists').doc(listid);
-    docRef.update({
-      title: NewTitle
-    });
-    //更新UI畫面
-    setAllCardData(newState);
-  };
+  },[]);
   //拖曳結束時
   const onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
+    setBgProps({});
+    
+    //清除拖曳卡片時的背景
+    let element = document.getElementById('bgCard');
+    if(element) element.remove();
+
     if (!destination) return;
+
     //變更看板順序
     if (type === "List") {
       //利用淺拷貝問題
@@ -248,10 +139,11 @@ const Wrapper = React.memo(function Wrapper() {
       });
       return;
     }
+    let _AllCardData = JSON.parse(JSON.stringify(AllCardData))
     //拖曳開始的看板、起始的位置
-    const SourceList = AllCardData.lists[source.droppableId];
+    const SourceList = _AllCardData.lists[source.droppableId];
     //拖曳結束時的看板、放下的位置
-    const DestinationList = AllCardData.lists[destination.droppableId];
+    const DestinationList = _AllCardData.lists[destination.droppableId];
     //被拖曳的卡片
     const draggingCard = SourceList.cards.filter((card) => {
       return card.id === draggableId;
@@ -261,27 +153,32 @@ const Wrapper = React.memo(function Wrapper() {
       //刪除拖曳的卡片
       SourceList.cards.splice(source.index, 1);
       SourceList.cards.splice(destination.index, 0, draggingCard);
-      const NewState = {
-        ...AllCardData,
+      /*const NewState = {
+        ..._AllCardData,
         lists: {
-          ...AllCardData.lists,
+          ..._AllCardData.lists,
           [SourceList.id]: SourceList
         }
       };
-      setAllCardData(NewState);
+      setAllCardData(NewState);*/
+      setAllCardData(_AllCardData)
     }
     //卡片移動至另一個看板
     if (source.droppableId !== destination.droppableId) {
-      SourceList.cards.splice(source.index, 1);
+      //SourceList.cards.splice(source.index, 1);
+      let newSourceCards = JSON.parse(JSON.stringify(SourceList.cards)).filter(card => card.id !== draggingCard.id);
+      SourceList.cards = newSourceCards;
       DestinationList.cards.splice(destination.index, 0, draggingCard);
-      const NewState = {
-        ...AllCardData,
+      //alert(destination.index)
+      /*const NewState = {
+        ..._AllCardData,
         lists: {
-          ...AllCardData.lists,
+          ..._AllCardData.lists,
           [SourceList.id]: SourceList
         }
       };
-      setAllCardData(NewState);
+      setAllCardData(NewState);*/
+      setAllCardData(_AllCardData)
       //更新至firebase
       let sourceRef = db.collection('Lists').doc(source.droppableId);
       let destinationRef = db.collection('Lists').doc(destination.droppableId);
@@ -300,20 +197,108 @@ const Wrapper = React.memo(function Wrapper() {
   }
   const ListData = AllCardData ? AllCardData.listIds.map((listId, index) => {
     const list = AllCardData.lists[listId];
-    return <List list={list} key={listId} index={index} />;
+    return <List BgProps={BgProps} list={list} key={listId} index={index} />;
   }) : ('');
   const CardContext_Obj = {
-    'AllCardData': AllCardData,
-    'setAllCardData': setAllCardData,
-    'AddNewCard': AddNewCard,
-    'AddNewList': AddNewList,
-    'UpDateTitle': UpDateTitle,
-    'UpdateCardContext': UpdateCardContext,
     'OpenCard': OpenCard,    //開啟卡片
     'setShow': setShow,      //控制是否顯示CardPanel.js
   };
+  /*const onDragUpdate = update => {
+    //return
+    const queryAttr = "data-rbd-drag-handle-draggable-id";
+    if(!update.destination) return;
+    
+    const draggableId = update.draggableId;
+    const destinationIndex = update.destination.index;
+
+    const domQuery = `[${queryAttr}='${draggableId}']`;
+    const draggedDOM = document.querySelector(domQuery);
+    
+    if (!draggedDOM) return;
+    
+    const { clientHeight } = draggedDOM;
+    let helpBlock = document.createElement('div');
+    var textNode = document.createTextNode("Hello world!");
+    helpBlock.appendChild(textNode)
+    draggedDOM.parentElement.parentElement.appendChild(helpBlock)
+    const clientY = parseFloat(window.getComputedStyle(draggedDOM.parentNode).paddingTop) + [...draggedDOM.parentNode.parentNode.children]
+    .slice(0, destinationIndex)
+    .reduce((total, curr) => {
+      const style = curr.children[0].children[0].currentStyle || window.getComputedStyle(curr.childNodes[0].childNodes[0]);
+      const marginBottom = parseFloat(style.marginBottom);
+      const paddingBottom = parseFloat(style.paddingBottom);
+      const paddingTop = parseFloat(style.paddingTop);
+      const clientHeight = parseFloat(style.height);
+      //console.log(style)
+      return total + (clientHeight + paddingTop + paddingBottom + marginBottom);
+    }, 0);
+    const clientWidth = parseFloat(window.getComputedStyle(draggedDOM.childNodes[0]).width)
+      + parseFloat(window.getComputedStyle(draggedDOM.childNodes[0]).marginLeft)
+      + parseFloat(window.getComputedStyle(draggedDOM.childNodes[0]).marginRight)
+    //背景卡片的位置
+    setBgProps({
+      clientHeight,
+      clientWidth,
+      clientY,
+      clientX: parseFloat(window.getComputedStyle(draggedDOM.childNodes[0]).marginLeft)
+    });
+  };*/
+  const onDragUpdate = update => {
+    let el = document.getElementById('bgCard');
+    if(el) el.remove()
+    //return
+    const queryAttr = "data-rbd-drag-handle-draggable-id";
+    if(!update.destination) return;
+    
+    const draggableId = update.draggableId;
+    const destinationIndex = update.destination.index;
+
+    const domQuery = `[${queryAttr}='${draggableId}']`;
+    const draggedDOM = document.querySelector(domQuery);
+    
+    if (!draggedDOM) return;
+    
+    const { clientHeight } = draggedDOM;
+    let bgCard = document.createElement('div');
+    bgCard.id = 'bgCard'
+    
+    const clientY = parseFloat(window.getComputedStyle(draggedDOM.parentNode).paddingTop) + [...draggedDOM.parentNode.parentNode.children]
+    .slice(0, destinationIndex)
+    .reduce((total, curr) => {
+      const style = curr.children[0].children[0].currentStyle || window.getComputedStyle(curr.childNodes[0].childNodes[0]);
+      const marginBottom = parseFloat(style.marginBottom);
+      const paddingBottom = parseFloat(style.paddingBottom);
+      const paddingTop = parseFloat(style.paddingTop);
+      const clientHeight = parseFloat(style.height);
+      //console.log(style)
+      return total + (clientHeight + paddingTop + paddingBottom + marginBottom);
+    }, 0);
+    const clientWidth = parseFloat(window.getComputedStyle(draggedDOM.childNodes[0]).width)
+      + parseFloat(window.getComputedStyle(draggedDOM.childNodes[0]).marginLeft)
+      + parseFloat(window.getComputedStyle(draggedDOM.childNodes[0]).marginRight)
+      bgCard.style.cssText = `
+      height: ${clientHeight}px; 
+      width: ${clientWidth}px;
+      margin: 0px 8px 8px 8px;
+      background-color: red;
+      
+    `
+    let target = draggedDOM.parentNode.parentNode.children[destinationIndex];
+    console.log(target)
+    target.appendChild(bgCard)
+    console.log(target)
+    //target.insertBefore(bgCard, target.nextSibling);
+    //draggedDOM.parentElement.parentElement.appendChild(bgCard)
+    //背景卡片的位置
+    /*setBgProps({
+      clientHeight,
+      clientWidth,
+      clientY,
+      clientX: parseFloat(window.getComputedStyle(draggedDOM.childNodes[0]).marginLeft)
+    });*/
+  };
   const ListLayer = (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
       <Droppable droppableId="app" type="List" direction="horizontal">
         {(provided) => (
           <Container ref={provided.innerRef} {...provided.droppableProps}>
@@ -333,5 +318,5 @@ const Wrapper = React.memo(function Wrapper() {
       </Container1>
     </CardContext.Provider>
   );
-})
+}
 export default Wrapper;

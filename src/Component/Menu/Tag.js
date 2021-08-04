@@ -49,12 +49,12 @@ const Tag = ({data, IconClick, handleClick, checked}) => {
     <Wrapper ref={Ref}>
       <Container 
         bgColor={data.bgColor} 
-        onClick={() => handleClick(Ref.current.getBoundingClientRect(), data)}
+        onClick={(e) => handleClick(e, Ref.current.getBoundingClientRect(), data)}
       >
         {data.tagName}
         <CheckIcon style={{display:`${checked ? 'block' : 'none'}`, fontSize: '14px'}} />
       </Container>
-      <Icon onClick={() => IconClick(Ref.current.getBoundingClientRect(), data)}>
+      <Icon onClick={(e) => IconClick(e, Ref.current.getBoundingClientRect(), data)}>
         <CreateOutlinedIcon style={{fontSize: '18px'}} />
       </Icon>
     </Wrapper>

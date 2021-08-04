@@ -3,11 +3,40 @@ import styled from "styled-components";
 //context
 import {ToDoListContext} from '../Container';
 //import { ModifyContext } from '../../List/ModifyCard';
+//icon
+import CloseIcon from '@material-ui/icons/Close';
 //api
 import { v4 as uuid } from "uuid";
 import db from '../../../API';
 const Wrapper = styled.div`
-  
+  display: flex;
+  flex-direction: column;
+`
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: space-between;
+`
+const TitleText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  color: #5e6c84;
+`
+const Icon = styled.div`
+  display: ${props => props.display ? props.display : 'flex'};
+  position: absolute;
+  left: ${props => props.left ? props.left : ''};
+  right: ${props => props.right ? props.right : ''};
+  justify-content: center;
+  align-items: center; 
+  width: 20px;
+  height: 20px;
+  padding: 10px 8px 10px 8px;
+  color: #5e6c84;
+  cursor: pointer;
 `
 const Span = styled.span`
   color: #5E6C84;
@@ -48,6 +77,14 @@ const Container = styled.div`
 	flex-grow: ${props => props.flexGrow ? props.flexGrow : null};
 	background-color: ${props => props.bgColor ? props.bgColor : null};
 `;
+const Hr = styled.div`
+  border-bottom: 1px solid #D5D9E0;
+  margin: 0px 10px 0px 10px;
+`
+const Container1 = styled.div`
+  
+  padding: 10px;
+`
 const Button = styled.button`
   background-color: ${props => props.bgColor ? props.bgColor : '#0079BF'};
   border-radius: 3px;
@@ -92,13 +129,22 @@ const ToDoList = ({card, close}) => {
   }
   return(
     <Wrapper>
-      <Span>標題</Span>
-      <Input type='text' value={Title} onChange={handleChange} />
-      <Container justifyContent='flex-start' marginTop='24px'>
-        <Button onClick={handleClick}>新增</Button>
-      </Container>
+      <Header>
+        <TitleText>新增代辦清單</TitleText>
+        <Icon right='0' onClick={close}>
+          <CloseIcon />
+        </Icon>
+      </Header>
+      <Hr/>
+      <Container1>
+        <Span>標題</Span>
+        <Input type='text' value={Title} onChange={handleChange} />
+        <Container justifyContent='flex-start' marginTop='24px'>
+          <Button onClick={handleClick}>新增</Button>
+        </Container>
+      </Container1>
     </Wrapper>
   )
-  }
+}
 export default ToDoList;
 

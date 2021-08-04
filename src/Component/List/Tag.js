@@ -3,9 +3,9 @@ import React,{useState, useEffect, useContext } from 'react';
 import { TagContext } from '../../Container';
 import styled from "styled-components";
 const Wrapper = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: ${props => props.tagID ? '8px' : null};
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: ${props => props.Data ? '8px' : null};
 `
 const Div = styled.div`
     font-weight: 700;
@@ -39,20 +39,18 @@ export default function Tag({tagID}) {
     setShowMode(!ShowMode);
   }
   useEffect(() => {
-    if(AllTagData && tagID){ //tagID是陣列
-      let data = AllTagData.filter(item => tagID.includes(item.tagID))
-      setData(data);
+    if(AllTagData && tagID ){ //tagID是陣列
+      let data = AllTagData.filter(item => tagID.includes(item.tagID));
+      data.length === 0 ? setData(null) : setData(data);
     }
   },[AllTagData, tagID])
   return (
-    <Wrapper tagID={tagID}>
+    <Wrapper Data={Data}>
       {tagID && Data ? (
         Data.map((item, index) => {
           return <Div key={index} onClick={fnc} bgColor={item.bgColor}>{ShowMode ? item.tagName : ''}</Div>
         })
-      ) : (
-        <div />
-      )}
+      ) :null}
     </Wrapper>
   )
 }

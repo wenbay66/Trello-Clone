@@ -26,16 +26,14 @@ const Wrapper = styled.div`
   animation: ${animat} .1s ease-in;
 `
 export default function Color(){
-    const ColorList = ['#1A79BF', '#D29034', '#519839', '#B04632', '#89609E', '#CD5A91', '#4BBF6B', '#00AECC', '#838C91'];
-    const Context = useContext(ThemeContext);
-    //const Theme = Context.Theme;
-    const CheseTheme = Context.CheseTheme;
-    const data = ColorList.map((item, index) => {
-        return <Box key={index} BgColor={item} fnc={() => CheseTheme('color', item)} />
-    })
-    return(
-        <Wrapper>
-            {data}
-        </Wrapper>
-    )
+  const ColorList = ['#1A79BF', '#D29034', '#519839', '#B04632', '#89609E', '#CD5A91', '#4BBF6B', '#00AECC', '#838C91'];
+  const { CheseTheme } = useContext(ThemeContext);
+  const data = ColorList.map((item, index) => {
+    return <Box key={index} BgColor={item} fnc={() => CheseTheme('color', item)} />
+  })
+  return(
+    <Wrapper>
+      {data}
+    </Wrapper>
+  )
 }

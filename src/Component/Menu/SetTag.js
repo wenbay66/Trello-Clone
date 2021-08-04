@@ -1,12 +1,17 @@
-import React,{useState, useEffect, useRef} from 'react';
+import React,{useState, useEffect, useRef, useContext} from 'react';
 import styled,{keyframes} from "styled-components";
 //component
-import Panel from '../../Panel';
+import Panel1 from '../../Panel1';
 import Tag from './Tag';
 import ModifyTag from './ModifyTag';
+//context
+import {TagContext} from '../../Container';
 //api
 import { v4 as uuid } from "uuid";
 import db from '../../API';
+//icon
+import CloseIcon from '@material-ui/icons/Close';
+import NavigateBeforeOutlinedIcon from '@material-ui/icons/NavigateBeforeOutlined';
 //import db from '../../../API';
 const animat = keyframes`
   0% {
@@ -20,10 +25,10 @@ const animat = keyframes`
 const Wrapper = styled.div`
   dislay: flex;
   flex-direction: column;
-  padding: 0px 8px 0px 8px;
+  padding: 0px 8px 0px 8px; 
   width: 100%;
-  position:relative;
-  animation: ${props => props.animat===false ? '' : animat} .1s ease-in;
+  position: relative;
+  animation: ${props => props.animat === false ? '' : animat} .1s ease-in;
 `
 const SearchBox = styled.input`
   box-sizing:border-box;
@@ -64,12 +69,48 @@ const Button = styled.button`
     background-color: #E2E4E9;
   }
 `
-const SetTag = ({TagContext_Obj, handleClick, IconClick, card_tagIDs, animat}) => {
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: space-between;
+`
+const Hr = styled.div`
+  border-bottom: 1px solid #D5D9E0;
+  margin: 0px 10px 0px 10px;
+`
+const TitleText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  color: #5e6c84;
+`
+const Icon = styled.div`
+  display: ${props => props.display ? props.display : 'flex'};
+  position: absolute;
+  left: ${props => props.left ? props.left : ''};
+  right: ${props => props.right ? props.right : ''};
+  justify-content: center;
+  align-items: center; 
+  width: 20px;
+  height: 20px;
+  padding: 10px 8px 10px 8px;
+  color: #5e6c84;
+  cursor: pointer;
+`
+const SetTag = ({handleClick, IconClick, CreateClick, card_tagIDs, animat}) => {
+  //handleClick, IconClick, card_tagIDs, animat => 卡片詳細資料傳入,不傳就執行預設動作
   const [UIdata, setUIdata] = useState(null);
   const [SearchText, setSearchText] = useState('');
+  const {TagContext_Obj} = useContext(TagContext);
   const {AllTagData, setAllTagData} = TagContext_Obj;
-  const [CurrentTagData, setCurrentTagData] = useState(AllTagData);
+  const [Position, setPosition] = useState(null);
+  const [PanelProps, setPanelProps] = useState(null);
+  const [HeaderTitle, setHeaderTitle] = useState([]);//add
+  //const [CurrentTagData, setCurrentTagData] = useState(AllTagData);
   const btnRef = useRef();
+  const childrenRef = useRef(null);
   //建立全新標籤
   const CreateTag = (event) => {
     const client = btnRef.current.getBoundingClientRect();
@@ -78,49 +119,51 @@ const SetTag = ({TagContext_Obj, handleClick, IconClick, card_tagIDs, animat}) =
     const Left = `${client.x}px`;                    //加上半個 icon 的寬度比較好看
     const width = `${client.width}px`;               //需扣掉半個 icon 寬度
     //click 新建
-    const Submit = async (oriTagData, newTag) => {
+    const Submit = async (event, close, newTag) => {
+      console.log(newTag)
+      //return
       const {Title, TagColor} = newTag;
       if(Title === '' || TagColor === null) return;
-      let _CurrentTagData = CurrentTagData ? [...CurrentTagData] : [];
+      let _AllTagData = AllTagData ? [...AllTagData] : [];
       const newData = { 'tagName': Title, 'bgColor':TagColor, 'tagID': uuid() };
-      _CurrentTagData.push(newData);
-      setAllTagData(_CurrentTagData);
-      setCurrentTagData(_CurrentTagData);
+      _AllTagData.push(newData);
+      setAllTagData(_AllTagData);
       //更新firebase
       let docRef = await db.collection('Tag').doc(newData.tagID);
       docRef.set({
         'tagName': Title,
         'bgColor': TagColor
       });
-      Panel.close();
+      close();
     };
-    const propsObj = { //有參數統一塞進這裡
-      'AllTagData': AllTagData,
-      'setAllTagData': setAllTagData,
-      'CurrentTagData': CurrentTagData,
-      'setCurrentTagData': setCurrentTagData,
+    setPosition({'Top': Top, 'Left': Left, 'width': width});
+    setPanelProps({
+      'title': '新增標籤',
+      'tagData': null,
       'Submit': Submit
-    };
-    Panel.open({Top, Left, width, propsObj, component: ModifyTag, Title: '新增標籤'})
+    })
   }
+  const CheckConfirm = () => childrenRef.current ? childrenRef.current.CheckConfirm() : null;
   //修改標籤
-  const EditTag = (client, tagData) => {
+  const EditTag = (e, client, tagData) => {
     //top、left、width、tagName
     const Top = `${client.y + client.height + 2}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
     const Left = `${client.x + 16}px`;               //加上半個 icon 的寬度比較好看
     const width = `${client.width - 16}px`;          //需扣掉半個 icon 寬度
+    
     //click 儲存
-    const Submit = async (oriTagData, newTag) => {
+    const Submit = async (event, oriTagData, newTag) => {
       const {Title, TagColor} = newTag;
       if(Title === '' || TagColor === null) return;
       //沒有修改(直接結束)
       if(oriTagData.tagName === Title && oriTagData.bgColor === TagColor){
-        Panel.close();
+        setPosition(null);
+        setPanelProps(null);
         return;
       };
-      let _CurrentTagData = CurrentTagData ? [...CurrentTagData] : [];
+      let _AllTagData = AllTagData ? [...AllTagData] : [];
       //更新畫面資料
-      _CurrentTagData.every(tag => {
+      _AllTagData.every(tag => {
         if(tag.tagID === oriTagData.tagID){
           tag.tagName = Title;
           tag.bgColor = TagColor;
@@ -128,35 +171,44 @@ const SetTag = ({TagContext_Obj, handleClick, IconClick, card_tagIDs, animat}) =
         };
         return true;
       });
-      setAllTagData(_CurrentTagData);
-      setCurrentTagData(_CurrentTagData);
+      setAllTagData(_AllTagData);
       //更新firebase
       let docRef = await db.collection('Tag').doc(oriTagData.tagID);
       docRef.update({
         'tagName': Title,
         'bgColor': TagColor
       });
-      Panel.close();
+      setPosition(null);
+      setPanelProps(null);
     }
-    const propsObj = {
+    setPosition({'Top': Top, 'Left': Left, 'width': width});
+    setPanelProps({
       'tagData': tagData,
       'AllTagData': AllTagData,
       'setAllTagData': setAllTagData,
-      'CurrentTagData': CurrentTagData,
-      'setCurrentTagData': setCurrentTagData,
       'Submit': Submit
-    };
-    Panel.open({Top, Left, width, propsObj, component: ModifyTag, Title: '修改標籤'})
+    })
+  }
+  const GoNext = (title) => {
+    const _HeaderTitle = HeaderTitle.length === 0 ? [] : [...HeaderTitle];
+    _HeaderTitle.push(title);
+    setHeaderTitle(_HeaderTitle);
+  };
+  const GoBack = () => {
+    const _HeaderTitle = [...HeaderTitle];
+    _HeaderTitle.pop();
+    setHeaderTitle(_HeaderTitle);
+    CheckConfirm();
   }
   //計算畫面資料
   useEffect(() => {
-    if (CurrentTagData === null) return;
+    if (AllTagData === null) return;
     setUIdata(getUIdata());
-  },[CurrentTagData])// eslint-disable-line react-hooks/exhaustive-deps
+  },[AllTagData, card_tagIDs])// eslint-disable-line react-hooks/exhaustive-deps
   //根據SearchText改變畫面資料
   useEffect(() => {
     const search = () => {
-      if (CurrentTagData === null) return;
+      if (AllTagData === null) return;
       setUIdata(getUIdata());
     }
     //search after .5s beacuse efficient
@@ -169,7 +221,8 @@ const SetTag = ({TagContext_Obj, handleClick, IconClick, card_tagIDs, animat}) =
   },[SearchText])// eslint-disable-line react-hooks/exhaustive-deps
   //計算畫面資料
   const getUIdata = () => {
-    return CurrentTagData
+    if(!AllTagData) return;
+    return AllTagData
     .filter(tagData => {  //如果有輸入搜尋文字,畫面資料須包含搜尋文字
       let tagName = tagData.tagName.toUpperCase();
       return SearchText === '' ? (tagData) : (tagName.indexOf(SearchText.toUpperCase()) !== -1);
@@ -192,7 +245,22 @@ const SetTag = ({TagContext_Obj, handleClick, IconClick, card_tagIDs, animat}) =
       <SearchBox placeholder='搜尋標籤...' onChange={e => setSearchText(e.target.value)} />
       <H4>標籤</H4>
       {UIdata ? UIdata : ''}
-      <Button ref={btnRef} onClick={CreateTag}>建立新標籤</Button>
+      <Button ref={btnRef} onClick={CreateClick ? CreateClick : CreateTag}>建立新標籤</Button>
+      {Position ? (
+        <Panel1 close={() => setPosition(null)} Top={Position.Top} Left={Position.Left} width={Position.width} Title={PanelProps.title}>
+          <Header>
+            <Icon left='0' display={HeaderTitle.length === 0 ? 'none' : null} onClick={GoBack}>
+              <NavigateBeforeOutlinedIcon />
+            </Icon>
+            <TitleText>{HeaderTitle.length === 0 ? '修改標籤' : HeaderTitle[HeaderTitle.length - 1]}</TitleText>
+            <Icon right='0' onClick={() => setPosition(null)}>
+              <CloseIcon />
+            </Icon>
+          </Header>
+          <Hr />
+          <ModifyTag ref={childrenRef} GoNext={GoNext} propsObj={PanelProps} close={() => setPosition(null)} />
+        </Panel1>
+      ) : null}
     </Wrapper>
   )
 }

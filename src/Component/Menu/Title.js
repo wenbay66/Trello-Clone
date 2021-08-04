@@ -28,15 +28,15 @@ const Icon = styled.div`
         cursor: pointer
     }
 `
-export default function Title({handleClose, GoBack, TitleTextList, ComponentList}){
+export default function Title({handleClose, GoBack, ComponentList}){
     return(
         <Wrapper>
-            {ComponentList.length !== 0 ? (
+            {ComponentList.length > 0 ? (
                 <Icon left='0' onClick={GoBack}>
                     <NavigateBeforeOutlinedIcon />
                 </Icon>
             ) : ('')}
-            {TitleTextList.length === 0 ? '選單' : TitleTextList[TitleTextList.length - 1]}
+            {ComponentList.length === 0 ? '選單' : ComponentList[ComponentList.length - 1].title}
             <Icon right='0' onClick={handleClose}>
                 <CloseIcon />
             </Icon>

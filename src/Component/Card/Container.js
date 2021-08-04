@@ -25,7 +25,6 @@ const Right = styled.div`
 export const ToDoListContext = React.createContext();
 const Container = ({Icon, card, List_Obj}) => {
   const [CheckList, setCheckList] = useState([]);
-  
   //待辦清單(firebase資料)
   useEffect(() => {
     //用card.id去firebase抓
@@ -37,11 +36,10 @@ const Container = ({Icon, card, List_Obj}) => {
     }
     getDate();
   }, []);// eslint-disable-line react-hooks/exhaustive-deps
-  
   //待辦清單資料(測試環境)
   useEffect(() => {
     //data format
-    const Example = [
+    const Example = [// eslint-disable-line no-unused-vars
       {
         id: '1qaz2wsx',
         title: '元件清單',
@@ -85,12 +83,12 @@ const Container = ({Icon, card, List_Obj}) => {
     <Wrapper>
       <ToDoListContext.Provider value={{ToDoListContext_Obj}}>
         <Left>
-          <TagContainer card={card} Icon={Icon} />
+          <TagContainer card={card} List_Obj={List_Obj} Icon={Icon} />
           <Description card={card} Icon={Icon} />
           <ListContainer card={card} List_Obj={List_Obj} Icon={Icon} />
         </Left>
         <Right>
-          <SideBar card={card} CheckList={CheckList} setCheckList={setCheckList} />
+          <SideBar card={card} List_Obj={List_Obj} CheckList={CheckList} setCheckList={setCheckList} />
         </Right>
       </ToDoListContext.Provider>
     </Wrapper>

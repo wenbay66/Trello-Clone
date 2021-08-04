@@ -3,7 +3,9 @@ import styled from "styled-components";
 //component
 import ListItem from './ListItem';
 import ListTitle from './ListTitle';
+import CheckListItem from './CheckListItem';
 import InputArea from './InputArea';
+import Panel1 from '../../../Panel1';
 //api
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { v4 as uuid } from "uuid";
@@ -41,6 +43,7 @@ const Button = styled.button`
 `
 const Item = styled.div`
   position: relative;  
+  background-color: ${props => props.isDragging ? 'blue' : 'red'};
   ${props => props.draggableStyle ? {...props.draggableStyle} : null};
 `
 //重新計算清單順序
@@ -53,12 +56,15 @@ const Item = styled.div`
 const List = ({list, card, List_Obj, CheckList, setCheckList, index, Icon}) => {
   const queryAttr = "data-rbd-drag-handle-draggable-id";
   const inputRef = useRef();
+  const Ref = useRef();
   const { id, title, ToDoList } = list;
   //const [ToDo, setToDo] = useState(ToDoList);
   const [Hidden, setHidden] = useState(false);//是否隱藏以打勾項目
   const [Edit, setEdit] = useState(false);
   const [newItemName, setnewItemName] = useState('');
   const [BgProps, setBgProps] = useState({});
+  const [Position, setPosition] = useState(null);
+  const [propsObj, setpropsObj] = useState(null);
   //拖曳結束更新卡片順序
   const onDragEnd = result => {
     // dropped outside the list
@@ -125,8 +131,8 @@ const List = ({list, card, List_Obj, CheckList, setCheckList, index, Icon}) => {
   }).map((item, index) => (//根據filter的結果渲染UI
     <Draggable key={item.id} draggableId={item.id} index={index}>
       {(provided, snapshot) => (
-        <Item ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} draggableStyle={provided.draggableProps.style}>
-          <ListItem List_Obj={List_Obj} Listid={id} ToDo={item} card={card} Icon={Icon} isDragging={snapshot.isDragging} />
+        <Item isDragging={snapshot.isDragging} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} draggableStyle={provided.draggableProps.style}>
+          <ListItem List_Obj={List_Obj} Listid={id} ToDo={item} card={card} setpropsObj={setpropsObj} setPosition={setPosition} Icon={Icon} isDragging={snapshot.isDragging} />
         </Item>
       )}
     </Draggable>
@@ -158,6 +164,11 @@ const List = ({list, card, List_Obj, CheckList, setCheckList, index, Icon}) => {
     setData(_CheckList);
     handleClose();
   }
+  //關閉彈出層
+  const close = () => {
+    setPosition(null);
+    setpropsObj(null);
+  }
   return(
     <Wrapper marginTop={index > 0 ? '8px' : null}>
       <ListTitle Icon={Icon} title={title} card={card} Listid={id} ToDoList={ToDoList} Hidden={Hidden} setHidden={setHidden} />
@@ -187,6 +198,11 @@ const List = ({list, card, List_Obj, CheckList, setCheckList, index, Icon}) => {
           <Button onClick={() => setEdit(true)}>增加項目</Button>
         )}
       </Container>
+      {Position ? (
+          <Panel1 Top={Position.Top} Left={Position.Left} width={Position.width} close={close}>
+            <CheckListItem parentRef={Ref} propsObj={propsObj} close={close}/>
+          </Panel1>
+      ) : (null)}
     </Wrapper>
   )
 }

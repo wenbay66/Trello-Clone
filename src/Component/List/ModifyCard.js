@@ -7,7 +7,7 @@ import Container from '../Card/Container';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 const Wrapper = styled.div`
   background: #F4F5F7;
-  width: 40%;
+  width: ${props => props.clientWidth > 1440 ? '40%' : '50%'};
   min-height: calc(100vh - 90px);
   margin: 0 auto;
   margin-top: 45px;
@@ -42,11 +42,9 @@ const Span = styled.span`
 `
 export const ModifyContext = React.createContext();
 const ModifyCard = ({ close, card, List_Obj}) => {
-  //const { List_Obj, CardContext_Obj, TagContext_Obj, card(當前卡片) } = paraObj; ===> paraObj內容
-  //const { card, List_Obj } = paraObj;
-  //const { ListTitle } = List_Obj;
+  const clientWidth = document.body.clientWidth;
   return(
-    <Wrapper>
+    <Wrapper clientWidth={clientWidth}>
       <Header card={card} List_Obj={List_Obj} Icon={Icon} close={close} />
       <Span marginLeft='40px'>
         <span style={{marginRight: '5px'}}>在「{List_Obj.ListTitle}」列表中</span>

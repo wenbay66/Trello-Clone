@@ -1,11 +1,8 @@
-import React, {useState, useContext} from "react";
+import React, {useContext} from "react";
 //component
 import Tag from './Tag';
-import CardPanel from '../../CardPanel';
-import CardPanel1 from '../../CardPanel1';
-import ModifyCard from "./ModifyCard";
 import { Draggable } from "react-beautiful-dnd";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 //icon
 import CreateIcon from '@material-ui/icons/Create';
 //context
@@ -37,23 +34,14 @@ const Wrapper = styled.div`
   &:hover ${Icon} {
     opacity: 1;
   };
+  ${({isDragging}) => isDragging && css`
+    transform: rotate(3deg) 
+  `}
 `
 export default function Card(props) {
-  const {card, index, List_Obj, TagContext_Obj, CardContext_Obj} = props;
+  const {card, index, List_Obj} = props;
   //const [show, setshow] = useState(false);
   const {OpenCard} = useContext(CardContext);
-  const OpenCard1 = () => {
-    const paraObj = {
-      'List_Obj': List_Obj,
-      'TagContext_Obj': TagContext_Obj,    //source: src/Container.js
-      'CardContext_Obj': CardContext_Obj,  //sourec: src/List/Wrapper.js
-      'card': card
-    }
-    CardPanel.open({
-      'component': ModifyCard,  //CardPanel要渲染的組件
-      'paraObj': paraObj        //帶進ModifyCard.js 的傳參
-    });
-  }
   const EditCard = (event) => {
     event.stopPropagation();
     alert(card.context);
@@ -61,9 +49,9 @@ export default function Card(props) {
   
   const cardLayer = (
     <Draggable draggableId={card.id} index={index}>
-      {(provided) => (
+      {(provided, snapshot) => (
         <div ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps}>
-          <Wrapper onClick={() => OpenCard(card, List_Obj)}>
+          <Wrapper isDragging={snapshot.isDragging} onClick={() => OpenCard(card, List_Obj)}>
             <Icon onClick={EditCard}>
               <CreateIcon style={{fontSize:'12px',color:'#5e6c84'}} />
             </Icon>

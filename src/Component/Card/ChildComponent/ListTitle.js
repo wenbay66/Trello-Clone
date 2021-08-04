@@ -2,6 +2,7 @@ import React,{useState, useEffect, useRef, useContext} from 'react';
 import styled from "styled-components";
 //component
 import Panel from '../../../Panel';
+import Panel1 from '../../../Panel1';
 //context
 import { ToDoListContext } from '../Container';
 //icon
@@ -66,6 +67,38 @@ const Textarea = styled.textarea`
   box-sizing: border-box;
   padding: 8px 12px 8px 12px;
 `
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: space-between;
+`
+const TitleText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #5e6c84;
+`
+const Icon = styled.div`
+  display: ${props => props.display ? props.display : 'flex'};
+  position: absolute;
+  left: ${props => props.left ? props.left : ''};
+  right: ${props => props.right ? props.right : ''};
+  justify-content: center;
+  align-items: center; 
+  width: 20px;
+  height: 20px;
+  padding: 10px 8px 10px 8px;
+  color: #5e6c84;
+  cursor: pointer;
+`
+const Hr = styled.div`
+  border-bottom: 1px solid #D5D9E0;
+  margin: 0px 10px 0px 10px;
+`
 const PanelComponent = ({propsObj, close}) => {
   const { fnc, btnName } = propsObj;
   const btnProps = {width: '100%', marginTop: '15px', color: '#FFF', bgColor: '#b04632', hoverColor: '#933b27'};
@@ -75,8 +108,17 @@ const PanelComponent = ({propsObj, close}) => {
   }
   return(
     <div>
-      <span>刪除待辦清單是永久性的，無法復原。</span>
-      <Button onClick={handleClick} {...btnProps}>{btnName}</Button>
+      <Header>
+        <TitleText>刪除代辦清單</TitleText>
+        <Icon right='0' onClick={close}>
+          <CloseIcon />
+        </Icon>
+      </Header>
+      <Hr />
+      <div style={{padding: '8px'}}>
+        <TitleText>刪除待辦清單是永久性的，無法復原。</TitleText>
+        <Button onClick={handleClick} {...btnProps}>{btnName}</Button>
+      </div>
     </div>
   )
 }
@@ -85,6 +127,8 @@ const ListTitle = ({Icon, card, title, Listid, ToDoList, Hidden, setHidden}) => 
   const [Edit, setEdit] = useState(false);
   const [oriTitle, setoriTitle] = useState(title);
   const [newTitle, setnewTitle] = useState(title);
+  const [Position, setPosition] = useState(null);
+  const [propsObj, setpropsObj] = useState(null);
   const Ref = useRef();
   const {ToDoListContext_Obj} = useContext(ToDoListContext);  //卡片的代辦清單
   const {CheckList, setCheckList} = ToDoListContext_Obj;
@@ -104,7 +148,26 @@ const ListTitle = ({Icon, card, title, Listid, ToDoList, Hidden, setHidden}) => 
     setHidden(!Hidden);
   }
   //刪除代辦清單 
-  const handleDelete = (ref) => {
+  const handleDelete = ref => {
+    const client = ref.current.getBoundingClientRect();
+    const Top = `${client.y + client.height}px`;
+    const Left = `${client.x}px`;               
+    const width = '330px';     
+    //更新UIdata
+    const fnc = () => {
+      //更新UIdata
+      const newState = CheckList.filter(List => List.id !== Listid);
+      setCheckList(newState);
+      //更新firebase
+      let docRef = db.collection('Card_ToDoList').doc(card.id);
+      docRef.set({
+        ListArray: newState
+      });
+    }    
+		setPosition({Top, Left, width});
+    setpropsObj({fnc, btnName:`刪除${newTitle}`});
+  }
+  const handleDelete1 = (ref) => {
     const client = ref.current.getBoundingClientRect();
     //更新UIdata
     const fnc = () => {
@@ -148,11 +211,18 @@ const ListTitle = ({Icon, card, title, Listid, ToDoList, Hidden, setHidden}) => 
     setEdit(false);
     setnewTitle(oriTitle);
   }
+  const handleKeyDown = event => {
+    if(event.keyCode === 13) handleSave()
+  }
+  const close = () => {
+    setPosition(null);
+    setpropsObj(null);
+  }
   const btnProps = {bgColor:'#0079BF', hoverColor:'#156AA7', color:'#FFF'};
   const editProps = {width:'100%', direction:'column', alignItems:'flex-start'};
   const UIdata = Edit ? (
     <Container {...editProps} >
-      <Textarea value={newTitle} onChange={(e) => setnewTitle(e.target.value)} />
+      <Textarea value={newTitle} onKeyDown={handleKeyDown} onChange={(e) => setnewTitle(e.target.value)} />
       <Container margin='5px 0 0 0'>
         <Button onClick={handleSave} {...btnProps} >儲存</Button>
         <Icon cursor='pointer'>
@@ -175,6 +245,11 @@ const ListTitle = ({Icon, card, title, Listid, ToDoList, Hidden, setHidden}) => 
         <Button marginRight='8px' onClick={handleClick}>{Hidden ? `顯示已打勾項目 (${ItemNum})` : '隱藏已打勾的項目'}</Button>
         <Button ref={Ref} onClick={() => handleDelete(Ref)}>刪除</Button>
       </Container>
+      {Position ? (
+          <Panel1 Top={Position.Top} Left={Position.Left} width={Position.width} close={close}>
+            <PanelComponent propsObj={propsObj} close={close} />
+          </Panel1>
+      ) : (null)}
     </Wrapper>
   )
 }

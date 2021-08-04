@@ -28,12 +28,9 @@ const SubItem = styled.span`
   color: rgb(94, 108, 132) ;
 `
 export default function Button(props){
-  //{Name, Obj} = propsObj; //propsObj內容物
-  //Name => 要帶入Component參數的props name
-  //Obj => 要帶入Component的參數，如果沒有就帶null
-  const { Component, MainTitle, SubTitle, propsObj = null } = props;
+  const { Component, MainTitle, SubTitle } = props;
   const GoNext = useContext(GoNextContext);
-  const fnc = () => GoNext(Component, MainTitle, propsObj);
+  const fnc = () => GoNext(Component, MainTitle);
   return(
     <Wrapper onClick={fnc}>
       <Context padding='0px 12px 0px 6px' width='20px'>
