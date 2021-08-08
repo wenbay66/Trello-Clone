@@ -1,5 +1,4 @@
 import React,{ useContext } from "react";
-import styled from "styled-components";
 //component
 import Title from "./Title";
 import Card from "./Card";
@@ -8,14 +7,6 @@ import InputContainer from "./InputContainer";
 import {AllCardContext} from '../../Container';
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
-const BgCard = styled.div`
-  position: absolute;
-  top: ${props => props.BgProps ? props.BgProps.clientY : 0}px;
-  left: ${props => props.BgProps ? props.BgProps.clientX : 0}px;
-  height: ${props => props.BgProps ? props.BgProps.clientHeight : null}px;
-  width: ${props => props.BgProps ? props.BgProps.clientWidth : null}px;
-  background:red;
-`
 export default function List({ list, BgProps, index }) {
   const { searchTag, searchText } = useContext(AllCardContext);
   //檢查卡片有沒有包含要搜尋的標籤
@@ -74,8 +65,7 @@ export default function List({ list, BgProps, index }) {
                       />
                     );
                   }) : null}
-                  {/*<BgCard BgProps={BgProps} />*/}
-                  {/*provided.placeholder*/}
+                  {provided.placeholder}
                 </div>
               )}
             </Droppable>
@@ -87,25 +77,3 @@ export default function List({ list, BgProps, index }) {
     </Draggable>
   );
 }
-/**
- * return (
-    <Draggable draggableId={list.id} index={index}>
-      {(provided) => (
-        <div ref={provided.innerRef} {...provided.draggableProps}>
-          <Paper className={classes.root} {...provided.dragHandleProps}>
-            <Title listId={list.id} title={list.title} />
-            <Droppable droppableId={list.id}>
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps}>
-                  {CardData}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-            <InputContainer type="Card" listId={list.id} />
-          </Paper>
-        </div>
-      )}
-    </Draggable>
-  );
- */

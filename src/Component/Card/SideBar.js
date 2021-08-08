@@ -6,13 +6,12 @@ import Box from './Box';
 import Persion from './SideBarChild/Persion';
 import SidebarTag from './SideBarChild/SidebarTag';
 import ToDoList from './SideBarChild/ToDoList';
+import RemoveCard from './SideBarChild/RemoveCard';
 //icon
-//import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
 import LocalOfferOutlinedIcon from '@material-ui/icons/LocalOfferOutlined';
 import SpeakerNotesOutlinedIcon from '@material-ui/icons/SpeakerNotesOutlined';
-//import ScheduleOutlinedIcon from '@material-ui/icons/ScheduleOutlined';
-//import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
-//import FeaturedPlayListOutlinedIcon from '@material-ui/icons/FeaturedPlayListOutlined';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -23,11 +22,6 @@ const Span = styled.span`
   font-weight: 500;
 `
 const list = [
-  /*{
-    name: '成員',
-    icon: PersonOutlineOutlinedIcon,
-    ComponentName: 'Persion'
-  },*/
   {
     name: '標籤',
     icon: LocalOfferOutlinedIcon,
@@ -38,32 +32,23 @@ const list = [
     icon: SpeakerNotesOutlinedIcon,
     ComponentName: 'ToDoList'
   },
-  /*{
-    name: '日期',
-    icon: ScheduleOutlinedIcon,
-    ComponentName: 'Persion'
-  },
   {
-    name: '附件',
-    icon: AttachFileOutlinedIcon,
-    ComponentName: 'Persion'
-  },
-  {
-    name: '封面',
-    icon: FeaturedPlayListOutlinedIcon,
-    ComponentName: 'Persion'
-  }*/
+    name: '刪除卡片',
+    icon: HighlightOffIcon,
+    ComponentName: 'RemoveCard'
+  }
 ];
 const Components = {
   'Persion': Persion,
   'SidebarTag': SidebarTag,
-  'ToDoList': ToDoList
+  'ToDoList': ToDoList,
+  'RemoveCard': RemoveCard
 }
-const SideBar = ({List_Obj, card}) => {
+const SideBar = ({List_Obj, card, closeCard}) => {
   const [Position, setPosition] = useState(null);
   const [ComponentName, setComponentName] = useState(null);
   //開啟彈出層
-  const fnc = (client, name, ComponentName) => {
+  const openPanel = (client, name, ComponentName) => {
     //top、left、width、tagName
     const Top = `${client.y + client.height + 5}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
     const Left = `${client.x}px`;   
@@ -80,7 +65,7 @@ const SideBar = ({List_Obj, card}) => {
   }
   const UIdata = list.map((item, index) => {
     const Icon = item.icon;
-    const props = {fnc:fnc, ComponentName:item.ComponentName, name:item.name}
+    const props = {fnc:openPanel, ComponentName:item.ComponentName, name:item.name}
     return (
       <Box key={index} {...props} >
         <Icon style={{marginRight: '8px'}} fontSize='small' />
@@ -94,7 +79,7 @@ const SideBar = ({List_Obj, card}) => {
         {UIdata}
         {Position ? (
           <Panel1 Top={Position.Top} Left={Position.Left} width={Position.width} close={close}>
-            <ChildComponent card={card} List_Obj={List_Obj} close={close} />
+            <ChildComponent card={card} List_Obj={List_Obj} close={close} closeCard={closeCard} />
           </Panel1>
       ) : (null)}
     </Wrapper>

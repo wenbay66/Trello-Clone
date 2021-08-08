@@ -1,7 +1,6 @@
 import React,{useState, useEffect, useRef, useContext} from 'react';
 import styled from "styled-components";
 //component
-import Panel from '../../../Panel';
 import Panel1 from '../../../Panel1';
 //context
 import { ToDoListContext } from '../Container';
@@ -166,27 +165,6 @@ const ListTitle = ({Icon, card, title, Listid, ToDoList, Hidden, setHidden}) => 
     }    
 		setPosition({Top, Left, width});
     setpropsObj({fnc, btnName:`刪除${newTitle}`});
-  }
-  const handleDelete1 = (ref) => {
-    const client = ref.current.getBoundingClientRect();
-    //更新UIdata
-    const fnc = () => {
-      //更新UIdata
-      const newState = CheckList.filter(List => List.id !== Listid);
-      setCheckList(newState);
-      //更新firebase
-      let docRef = db.collection('Card_ToDoList').doc(card.id);
-      docRef.set({
-        ListArray: newState
-      });
-    }
-    //開dialog做confirm
-    const Top = `${client.y + client.height + 2}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
-    const Left = `${client.x}px`;               
-    const width = '330px';         
-    let _component = PanelComponent;
-    const propsObj = {fnc, btnName:`刪除${newTitle}`};
-    Panel.open({Top, Left, width, propsObj, component: _component, Title: `要刪除 ${newTitle} 嗎?`});
   }
   //編輯模式時點擊儲存
   const handleSave = () => {

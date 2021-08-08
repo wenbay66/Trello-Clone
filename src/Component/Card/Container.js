@@ -23,7 +23,7 @@ const Right = styled.div`
   width: 25%;
 `
 export const ToDoListContext = React.createContext();
-const Container = ({Icon, card, List_Obj}) => {
+const Container = ({Icon, card, List_Obj, closeCard}) => {
   const [CheckList, setCheckList] = useState([]);
   //待辦清單(firebase資料)
   useEffect(() => {
@@ -88,7 +88,7 @@ const Container = ({Icon, card, List_Obj}) => {
           <ListContainer card={card} List_Obj={List_Obj} Icon={Icon} />
         </Left>
         <Right>
-          <SideBar card={card} List_Obj={List_Obj} CheckList={CheckList} setCheckList={setCheckList} />
+          <SideBar card={card} List_Obj={List_Obj} CheckList={CheckList} setCheckList={setCheckList} closeCard={closeCard} />
         </Right>
       </ToDoListContext.Provider>
     </Wrapper>

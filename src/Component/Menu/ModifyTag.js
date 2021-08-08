@@ -1,5 +1,4 @@
-import React,{useState, useEffect, useContext, useImperativeHandle} from 'react';
-import { v4 as uuid } from "uuid";
+import React,{useState, useContext, useImperativeHandle} from 'react';
 import styled from "styled-components";
 //component
 import TagBox from './TagBox';

@@ -34,41 +34,8 @@ const Container = () => {
   const [AllTagData, setAllTagData] = useState(null);    //標籤資料
   const [ShowMode, setShowMode] = useState(true);        //標籤顯示模式
   
-  //TagData之後要改成串接firebase API
+  //TagData firebase API
   useEffect(() => {
-    const TestTagData = [
-      {
-        tagID: 'tag-1',
-        tagName: 'Node.js',
-        bgColor: '#61BD50'
-      },
-      {
-        tagID: 'tag-2',
-        tagName: 'JavaScript',
-        bgColor: '#F2D600'
-      },
-      {
-        tagID: 'tag-3',
-        tagName: '工具類',
-        bgColor: '#FB9F1A'
-      },
-      {
-        tagID: 'tag-4',
-        tagName: '其他',
-        bgColor: '#EB5A46'
-      },
-      {
-        tagID: 'tag-5',
-        tagName: 'React',
-        bgColor: '#1A79BF'
-      },
-      {
-        tagID: 'tag-6',
-        tagName: 'Vue.js',
-        bgColor: '#61BD50'
-      }
-    ]
-    //setAllTagData(TestTagData)
     async function getData(){
       let TagDatas = await db.collection('Tag').get().then(dc => {
         return dc.docs.map(doc => {
@@ -80,7 +47,7 @@ const Container = () => {
     }
     getData();
   },[]);
-  //卡片資料(init render)串接firebase api
+  //卡片資料 firebase api
   useEffect(() => {
     async function getData(){
       await db.collection('Lists').get().then(Lists => {
@@ -105,7 +72,6 @@ const Container = () => {
       context: title
     };
     const list = AllCardData.lists[listid];
-    //list.cards = [...list.cards, newCard];
     list.cards = list.cards ? [...list.cards, newCard] : [newCard];
     const newState = {
       ...AllCardData,

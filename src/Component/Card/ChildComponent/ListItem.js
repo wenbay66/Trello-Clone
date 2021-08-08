@@ -2,13 +2,9 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from "styled-components";
 //context
 import { ToDoListContext } from '../Container';
-//import { ModifyContext } from '../../List/ModifyCard';
-import {AllCardContext} from '../../../Container';
 //api
-import { v4 as uuid } from "uuid";
 import db from '../../../API';
 //component
-import Panel from '../../../Panel';
 import InputArea from './InputArea';
 //icon
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -78,48 +74,6 @@ const CheckBox = styled.input`
 		}
 	}
 `;
-const Button = styled.button`
-  background-color: ${props => props.bgColor ? props.bgColor : '#0079BF'};
-  border-radius: 3px;
-  border: none;
-  color: #FFF;
-  padding: 6px 12px 6px 12px;
-  margin-left: ${props => props.marginLeft ? props.marginLeft : null};
-  margin-right: ${props => props.marginRight ? props.marginRight : null};
-  margin-top: ${props => props.marginTop ? props.marginTop : null};
-  width: ${props => props.width ? props.width : null};
-  cursor: pointer;
-  &:hover {
-    background-color: ${props => props.hoverColor ? props.hoverColor : '#156AA7'};
-  }
-`
-const PanelComponent = ({propsObj, parentRef, close}) => {
-  const { deleteToDo, transToCard } = propsObj;
-  const btnProps = {width: '100%', marginTop: '15px', color: '#FFF'};
-  const handleClick = (fnc) => {
-    fnc();
-    close();
-  };
-	//點擊其他地方可以關閉 Panel
-  useEffect(() => {
-    const onBodyClick = event => {
-      //react v17 必須增加判斷 ref.current
-      if(parentRef.current && !parentRef.current.contains(event.target)){
-          close();
-      }
-    }
-    document.body.addEventListener('click', onBodyClick);
-    return () => {
-      document.body.removeEventListener('click',onBodyClick);
-    }
-  },[])// eslint-disable-line react-hooks/exhaustive-deps
-  return(
-    <div>
-      <Button {...btnProps} onClick={() => handleClick(transToCard)}>轉換為卡片</Button>
-			<Button onClick={() => handleClick(deleteToDo)} bgColor='#b04632' hoverColor='#933b27' {...btnProps}>刪除</Button>
-    </div>
-  )
-}
 const ListItem = ({ToDo, Listid, card, List_Obj, Icon, setPosition, setpropsObj, isDragging}) => {
 	const inputRef = useRef();
 	const Ref = useRef();
@@ -129,8 +83,7 @@ const ListItem = ({ToDo, Listid, card, List_Obj, Icon, setPosition, setpropsObj,
   const [newTitle, setnewTitle] = useState(ToDo.context);
 	const {ToDoListContext_Obj} = useContext(ToDoListContext);        //卡片的代辦清單
 	const {CheckList, setCheckList} = ToDoListContext_Obj;
-	const { AllCardData, setAllCardData } = useContext(AllCardContext);  //卡片列表資料
-	const {ListID} = List_Obj;
+	
 	useEffect(() => {
 		ToDo.done ? setChecked(true) : setChecked(false);
 	},[ToDo]);
@@ -143,8 +96,6 @@ const ListItem = ({ToDo, Listid, card, List_Obj, Icon, setPosition, setpropsObj,
 	const CheckedChange = event => {
 		//更新context資料
 		updateChecked(!Checked);
-		//更新firebase
-
 	}
 	const updateChecked = (doneStatus) => {
 		//一張卡片可能有多個list，找到現在卡片所屬的list
@@ -161,7 +112,6 @@ const ListItem = ({ToDo, Listid, card, List_Obj, Icon, setPosition, setpropsObj,
 		newState[index].ToDoList = _ToDoList;
 		setCheckList(newState);
 		//更新firebase資料
-    //更新firebase
     let docRef = db.collection('Card_ToDoList').doc(card.id);
     docRef.set({
       ListArray: newState
@@ -200,60 +150,13 @@ const ListItem = ({ToDo, Listid, card, List_Obj, Icon, setPosition, setpropsObj,
 		setnewTitle(oriTitle);
 	}
 	const IconClick = (ref, event) => {
+		event.stopPropagation();
 		const client = ref.current.getBoundingClientRect();
 		const Top = `${client.y + client.height + 6}px`; //加上padding才會對齊
     const Left = `${client.x}px`;               
     const width = '330px';         
 		setPosition({Top, Left, width});
-		setpropsObj({Listid, ToDo, card, List_Obj});
-		return;
-    let _component = PanelComponent;
-		//刪除待辦細項
-		const deleteToDo = () => {
-			let _List = JSON.parse(JSON.stringify(CheckList.find(List => List.id === Listid)));
-			const ListIndex = CheckList.findIndex(List => List.id === Listid);
-			const newToDoList = _List.ToDoList.filter(todo => todo.id !== ToDo.id);
-			let newState = JSON.parse(JSON.stringify(CheckList));
-			_List.ToDoList = newToDoList;
-			newState[ListIndex] = _List;
-			//更新 context
-			setCheckList(newState);
-			//更新 firebase
-			let docRef = db.collection('Card_ToDoList').doc(card.id);
-			docRef.set({
-				ListArray: newState
-			});
-			console.log('delete success')
-		}
-		//待辦細項轉成卡片
-		const transToCard = () => {
-			const _list = AllCardData.lists[ListID];
-			const newCardId = uuid();
-			const newCard = {
-				id: newCardId,
-				context: newTitle
-			};
-			//list.cards = [...list.cards, newCard];
-			_list.cards = _list.cards ? [..._list.cards, newCard] : [newCard];
-			const newState = {
-				...AllCardData,
-				lists: {
-					...AllCardData.lists,
-					[ListID]: _list
-				}
-			};
-			//更新context
-      setAllCardData(newState);
-      //更新 firebase
-      let docRef = db.collection('Lists').doc(ListID);
-      docRef.set({
-        cards: _list.cards
-      });
-			deleteToDo();
-		}
-    const propsObj = {deleteToDo, transToCard};
-    Panel.open({Top, Left, width, propsObj, component: _component, Title: '項目動作'});
-		event.stopPropagation();
+		setpropsObj({Listid, ToDo, card, List_Obj});	
 	}
 	const handleChange = event => {
 		setnewTitle(event.target.value)

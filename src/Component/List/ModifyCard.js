@@ -50,7 +50,7 @@ const ModifyCard = ({ close, card, List_Obj}) => {
         <span style={{marginRight: '5px'}}>在「{List_Obj.ListTitle}」列表中</span>
         <VisibilityOutlinedIcon />
       </Span>
-      <Container Icon={Icon} card={card} List_Obj={List_Obj} />
+      <Container Icon={Icon} card={card} List_Obj={List_Obj} closeCard={close} />
     </Wrapper>
   )
 }

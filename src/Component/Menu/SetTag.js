@@ -109,18 +109,17 @@ const SetTag = ({handleClick, IconClick, CreateClick, card_tagIDs, animat}) => {
   const [PanelProps, setPanelProps] = useState(null);
   const [HeaderTitle, setHeaderTitle] = useState([]);//add
   //const [CurrentTagData, setCurrentTagData] = useState(AllTagData);
-  const btnRef = useRef();
+  const Ref = useRef();
   const childrenRef = useRef(null);
   //建立全新標籤
   const CreateTag = (event) => {
-    const client = btnRef.current.getBoundingClientRect();
+    const client = Ref.current.getBoundingClientRect();
     //top、left、width、tagName
-    const Top = `${client.y + client.height + 2}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
-    const Left = `${client.x}px`;                    //加上半個 icon 的寬度比較好看
+    const Top = `${client.y}px`; //需加上Tag的高度這樣才會位置才會在標籤正下方，再加2會比較好看
+    const Left = `${client.x - client.width - 16}px`;                    //加上半個 icon 的寬度比較好看
     const width = `${client.width}px`;               //需扣掉半個 icon 寬度
     //click 新建
     const Submit = async (event, close, newTag) => {
-      console.log(newTag)
       //return
       const {Title, TagColor} = newTag;
       if(Title === '' || TagColor === null) return;
@@ -219,6 +218,10 @@ const SetTag = ({handleClick, IconClick, CreateClick, card_tagIDs, animat}) => {
       clearTimeout(timeoutID)
     }
   },[SearchText])// eslint-disable-line react-hooks/exhaustive-deps
+  const close = () => {
+    setPosition(null);
+    setHeaderTitle([]);
+  }
   //計算畫面資料
   const getUIdata = () => {
     if(!AllTagData) return;
@@ -240,19 +243,24 @@ const SetTag = ({handleClick, IconClick, CreateClick, card_tagIDs, animat}) => {
       )
     });
   }
+  console.log('PanelProps = ', PanelProps)
   return(
     <Wrapper animat={animat}>
       <SearchBox placeholder='搜尋標籤...' onChange={e => setSearchText(e.target.value)} />
       <H4>標籤</H4>
-      {UIdata ? UIdata : ''}
-      <Button ref={btnRef} onClick={CreateClick ? CreateClick : CreateTag}>建立新標籤</Button>
+      <div ref={Ref}>{UIdata ? UIdata : ''}</div>
+      <Button onClick={CreateClick ? CreateClick : CreateTag}>建立新標籤</Button>
       {Position ? (
-        <Panel1 close={() => setPosition(null)} Top={Position.Top} Left={Position.Left} width={Position.width} Title={PanelProps.title}>
+        <Panel1 close={close} Top={Position.Top} Left={Position.Left} width={Position.width} Title={PanelProps.title}>
           <Header>
             <Icon left='0' display={HeaderTitle.length === 0 ? 'none' : null} onClick={GoBack}>
               <NavigateBeforeOutlinedIcon />
             </Icon>
-            <TitleText>{HeaderTitle.length === 0 ? '修改標籤' : HeaderTitle[HeaderTitle.length - 1]}</TitleText>
+            <TitleText>{PanelProps.title ? (
+              PanelProps.title
+             ) : (
+              HeaderTitle.length === 0 ? '修改標籤' : HeaderTitle[HeaderTitle.length - 1]
+             )}</TitleText>
             <Icon right='0' onClick={() => setPosition(null)}>
               <CloseIcon />
             </Icon>

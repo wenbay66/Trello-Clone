@@ -7,7 +7,6 @@ import {ThemeContext} from '../../App';
 //icon
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-import SentimentSatisfiedOutlinedIcon from '@material-ui/icons/SentimentSatisfiedOutlined';
 import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
 const animat = keyframes`
   0% {
@@ -46,9 +45,6 @@ export default function Container(){
       </Button>
       <Button MainTitle='搜尋卡片' Component='SearchCard' >
           <SearchOutlinedIcon />
-      </Button>
-      <Button MainTitle='貼圖' Component='Picture' >
-          <SentimentSatisfiedOutlinedIcon />
       </Button>
       <Button MainTitle='更多' Component='More' >
           <MoreHorizOutlinedIcon />

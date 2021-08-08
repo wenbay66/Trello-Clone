@@ -43,7 +43,7 @@ const Button = styled.button`
 `
 const Item = styled.div`
   position: relative;  
-  background-color: ${props => props.isDragging ? 'blue' : 'red'};
+  
   ${props => props.draggableStyle ? {...props.draggableStyle} : null};
 `
 //重新計算清單順序

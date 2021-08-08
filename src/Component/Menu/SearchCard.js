@@ -132,7 +132,7 @@ export default function SearchCard(){
   return(
     <Wrapper>
       <SearchBox value={textValue} onChange={handleChange} ref={inputRef} />
-      <Text>依字詞、標籤、成員或截止時間開始搜尋。</Text>
+      <Text>依字詞、標籤開始搜尋。</Text>
       <Hr />
       <TagContainer>
         {tagData}
