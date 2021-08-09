@@ -40,23 +40,19 @@ const ContainerDIV = styled.div`
 `
 
 export default function TopBar(){
-  //alert(isOpenContext)
-  const ccc = ()=>{
-    alert('123')
-  }
   const {isOpen, setisOpen} = useContext(OpenContext);
   return (
     <>
       <Container>
         <ContainerDIV paddingLeft='4px'>
-          <Btn fnc={ccc}>
+          <Btn>
             <FormatListBulletedRoundedIcon style={{fontSize:14}}/>
             <span>看板</span>
             <KeyboardArrowDownRoundedIcon/>
           </Btn>
           <span style={{marginLeft:'4px'}}>
             <Btn>
-                <TitleBtn>程式roadMap</TitleBtn>
+                <TitleBtn>測試roadMap</TitleBtn>
             </Btn>
           </span>
           <span style={{marginLeft:'4px'}}>
@@ -67,7 +63,7 @@ export default function TopBar(){
           <Border />
           <span>
             <Btn>
-                <span style={{padding:'0px 4px 0px 4px'}}>jen wen 的工作區</span>
+                <span style={{padding:'0px 4px 0px 4px'}}>工作區</span>
             </Btn>
           </span>
           <Border />

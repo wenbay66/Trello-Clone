@@ -126,6 +126,11 @@ const ToDoList = ({card, close}) => {
     //關閉Panel
     close();
   }
+  const handleKeyDown = event => {
+    if(event.keyCode === 13){
+      handleClick();
+    }
+  }
   return(
     <Wrapper>
       <Header>
@@ -137,7 +142,7 @@ const ToDoList = ({card, close}) => {
       <Hr/>
       <Container1>
         <Span>標題</Span>
-        <Input type='text' value={Title} onChange={handleChange} />
+        <Input type='text' value={Title} onKeyDown={handleKeyDown} onChange={handleChange} />
         <Container justifyContent='flex-start' marginTop='24px'>
           <Button onClick={handleClick}>新增</Button>
         </Container>

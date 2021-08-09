@@ -62,6 +62,11 @@ export default function InputCard(props) {
     //關閉
     handleClose();
   };
+  const handleKeyDown = event => {
+    if(event.keyCode === 13){
+      handleSubmit();
+    }
+  }
   useEffect(() => {
     inputRef.current.focus();
   }, [Open]);
@@ -73,7 +78,7 @@ export default function InputCard(props) {
   return (
     <div className={root}>
       <div className={test}>
-        <textarea ref={inputRef} rows="3" className={classes.textArea} placeholder={placeholder} value={CardTitle} onChange={handleChange} />
+        <textarea ref={inputRef} rows="3" onKeyDown={handleKeyDown} className={classes.textArea} placeholder={placeholder} value={CardTitle} onChange={handleChange} />
       </div>
       <div>
         <Button onClick={handleSubmit} className={classes.btn}>

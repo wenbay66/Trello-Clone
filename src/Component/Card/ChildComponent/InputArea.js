@@ -49,9 +49,14 @@ const InputArea = ({Icon, inputRef, value, rows, create, placeholder, handle}) =
 			inputRef.current.focus();
 		}
 	})
+  const handleKeyDown = event => {
+    if(event.keyCode === 13){
+      handleSave();
+    }
+  }
   return(
     <Wrapper width='100%' direction='column' alignItems='flex-start'>
-      <Textarea rows={rows} ref={inputRef} placeholder={placeholder} value={value} onChange={handleChange} create={create} />
+      <Textarea rows={rows} ref={inputRef} placeholder={placeholder} value={value} onKeyDown={handleKeyDown} onChange={handleChange} create={create} />
       <Container margin='5px 0 0 0'>
         <Button onClick={handleSave}>儲存</Button>
         <Icon cursor='pointer' onClick={handleClose}>

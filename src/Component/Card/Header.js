@@ -60,6 +60,11 @@ const Header = ({card, List_Obj, Icon, close}) => {
   const handleChange = event => {
     setTitle(event.target.value);
   };
+  const handleKeyDown = event => {
+    if(event.keyCode === 13){
+      handleBlur();
+    }
+  }
   useEffect(() => {
     return inputRef.current ? inputRef.current.focus() : "";
   }, [isEditTitle]);
@@ -70,7 +75,7 @@ const Header = ({card, List_Obj, Icon, close}) => {
       </Icon>
       <InputContainer>
         {isEditTitle ? (
-          <Input spellCheck="false" ref={inputRef} value={Title} onBlur={handleBlur} onChange={handleChange} />
+          <Input spellCheck="false" ref={inputRef} onKeyDown={handleKeyDown} value={Title} onBlur={handleBlur} onChange={handleChange} />
         ) : (
           <InputText onClick={handleClick}>{Title}</InputText>
         )}
