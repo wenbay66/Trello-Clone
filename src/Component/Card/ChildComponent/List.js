@@ -72,7 +72,6 @@ const List = ({list, card, List_Obj, CheckList, setCheckList, index, Icon}) => {
       return;
     }
     setBgProps({})  //背景卡片的位置
-    console.log('<-- DragEnd -->')
     //修改當前清單細項的順序
     let target = ToDoList[result.source.index];
     let _ToDo = JSON.parse(JSON.stringify(ToDoList));

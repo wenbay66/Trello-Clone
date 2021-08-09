@@ -179,8 +179,6 @@ const Container = () => {
     'UpDateTitle': UpDateTitle,
     'UpdateCardContext': UpdateCardContext,
   };
-  console.log('searchTag = ', searchTag);
-  console.log('searchText = ', searchText)
   return(
     <WrapperContainer>
       <OpenContext.Provider value={{isOpen, setisOpen}}>

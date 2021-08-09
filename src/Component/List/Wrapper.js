@@ -44,7 +44,6 @@ const Wrapper = function Wrapper() {
     if (type === "List") {
       //利用淺拷貝問題
       const NewListIds = AllCardData.listIds;
-      console.log(NewListIds)
       NewListIds.splice(source.index, 1);
       NewListIds.splice(destination.index, 0, draggableId);
       setAllCardData({
@@ -67,14 +66,6 @@ const Wrapper = function Wrapper() {
       //刪除拖曳的卡片
       SourceList.cards.splice(source.index, 1);
       SourceList.cards.splice(destination.index, 0, draggingCard);
-      /*const NewState = {
-        ..._AllCardData,
-        lists: {
-          ..._AllCardData.lists,
-          [SourceList.id]: SourceList
-        }
-      };
-      setAllCardData(NewState);*/
       setAllCardData(_AllCardData)
     }
     //卡片移動至另一個看板
@@ -83,15 +74,6 @@ const Wrapper = function Wrapper() {
       let newSourceCards = JSON.parse(JSON.stringify(SourceList.cards)).filter(card => card.id !== draggingCard.id);
       SourceList.cards = newSourceCards;
       DestinationList.cards.splice(destination.index, 0, draggingCard);
-      //alert(destination.index)
-      /*const NewState = {
-        ..._AllCardData,
-        lists: {
-          ..._AllCardData.lists,
-          [SourceList.id]: SourceList
-        }
-      };
-      setAllCardData(NewState);*/
       setAllCardData(_AllCardData)
       //更新至firebase
       let sourceRef = db.collection('Lists').doc(source.droppableId);
@@ -102,7 +84,6 @@ const Wrapper = function Wrapper() {
       destinationRef.update({
         cards: DestinationList.cards
       })
-      //console.log("move to other list");
     }
   };
   const OpenCard = (card, List_Obj) => {

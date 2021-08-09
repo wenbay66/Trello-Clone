@@ -117,7 +117,6 @@ const ModifyTag = ({ GoNext, close, propsObj}, ref) => {
       });
     }
     tmplistIds.forEach(listId => apiCallback(listId));
-    console.log('cardTag SUCCESS !!!')
   }
   //刪除標籤資料
   const DeleteTag = async () => {

@@ -68,7 +68,6 @@ const Item = styled.div`
 `
 //重新計算清單順序
 const reorder = (list, startIndex, endIndex) => {
-	console.log(list)
   const result = Array.from(list);
 	const [removed] = result.splice(startIndex, 1);
 	result.splice(endIndex, 0, removed);

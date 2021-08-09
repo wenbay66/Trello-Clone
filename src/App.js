@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from "react";
+import React,{useState} from "react";
 //component
 import Header from "./Component/Header/Header";
 import Container from './Container';
@@ -17,9 +17,6 @@ export default function App() {
   const CheseTheme = (type, value) => {
     setTheme({type, value});
   } 
-  useEffect(() => {
-    console.log('app init-render')
-  }, []);
   return (
     <ThemeContext.Provider value={{Theme, CheseTheme}}>
       <div style={_Wrapper}>

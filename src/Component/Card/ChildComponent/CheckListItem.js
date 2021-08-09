@@ -80,7 +80,6 @@ const CheckListItem = ({propsObj, close}) => {
     docRef.set({
       ListArray: newState
     });
-    console.log('delete success')
   }
   //待辦細項轉成卡片
   const transToCard = () => {

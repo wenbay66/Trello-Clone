@@ -110,7 +110,6 @@ const ToDoList = ({card, close}) => {
   }
   const handleClick = () => {
     if(Title === '') return;
-    console.log(CheckList)
     let newList = {id: uuid(), title: Title, ToDoList: []};
     let newState;
     //卡片沒有待辦清單

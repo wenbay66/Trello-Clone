@@ -101,7 +101,6 @@ const Description = ({ Icon, card }) => {
     docRef.set({
       Description: Value
     });
-    console.log(Value)
   }
   const handleClose = () => {
     setEdit(false);

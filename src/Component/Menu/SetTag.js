@@ -243,7 +243,6 @@ const SetTag = ({handleClick, IconClick, CreateClick, card_tagIDs, animat}) => {
       )
     });
   }
-  console.log('PanelProps = ', PanelProps)
   return(
     <Wrapper animat={animat}>
       <SearchBox placeholder='搜尋標籤...' onChange={e => setSearchText(e.target.value)} />

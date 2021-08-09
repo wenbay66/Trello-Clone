@@ -44,7 +44,7 @@ export default function Card(props) {
   const {OpenCard} = useContext(CardContext);
   const EditCard = (event) => {
     event.stopPropagation();
-    alert(card.context);
+    //alert(card.context);
   }
   
   const cardLayer = (
