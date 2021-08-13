@@ -29,6 +29,32 @@ const Wrapper = function Wrapper() {
   const [CardPanelData, setCardPanelData] = useState(null);
   const [Show, setShow] = useState(false);
   const [BgProps, setBgProps] = useState({});
+  const counter1 = () => {
+    let privateCounter = 0;
+    const changeBy = (val) => {
+      privateCounter += val;
+    }
+    return {
+      increment: () => {
+        changeBy(1);
+      },
+      decrement: () => {
+        changeBy(-1);
+      },
+      value: () => {
+        return privateCounter;
+      }
+    };
+  }
+  const counter = counter1()
+  console.log('---------')
+  console.log('log = ', counter.value()); // logs 0
+  counter.increment();
+  counter.increment();
+  console.log('log = ', counter.value()); // logs 2
+  //counter.decrement();
+  //console.log('log = ', counter.value()); // logs 1
+
   //拖曳結束時
   const onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
